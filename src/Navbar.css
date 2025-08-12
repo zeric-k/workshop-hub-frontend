@@ -1,0 +1,38 @@
+/* src/Navbar.css */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #1f2937;
+  padding: 12px 20px;
+  color: white;
+}
+
+.navbar .logo {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 1rem;
+}
+
+.nav-links a:hover {
+  color: #fbbf24;
+}
+
+a {
+  margin-right: 20px; /* adds space after each link */
+}
+
