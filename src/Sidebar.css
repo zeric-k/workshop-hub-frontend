@@ -5,7 +5,12 @@
   position: fixed;
   top: 0;
   left: 0;
+  width: 200px; /* default expanded width */
   transition: width 0.3s ease;
+
+  display: flex;
+  flex-direction: column;
+
   overflow: hidden;
 }
 
@@ -13,15 +18,13 @@
   width: 40px;
 }
 
-.sidebar.expanded {
-  width: 200px;
-}
-
 .menu {
   list-style: none;
   padding: 0;
   margin: 0;
   padding-top: 60px; /* Push items below navbar height */
+  flex-grow: 1; /* This takes up available space */
+  overflow-y: auto;
 }
 
 .menu li {
@@ -33,20 +36,51 @@
   background-color: #444;
 }
 
+/* Add a spacer div to push bottom-bar down when menu is hidden */
+.menu-spacer {
+  flex-grow: 1; /* Takes up all available space */
+}
+
+.bottom-bar {
+  border-top: 1px solid #444;
+  height: 50px; /* fixed height */
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0; /* Prevent it from shrinking */
+}
+
+.user-label {
+  font-weight: bold;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  position: absolute;
+  left: 10px;
+  right: 50px;
+}
+
 .toggle-btn {
   background-color: #222;
   border: none;
   color: white;
-  font-size: 1.5rem;  /* bigger than before */
-  font-weight: bold;  /* thicker lines */
+  font-size: 1.5rem;
+  font-weight: bold;
   cursor: pointer;
-  padding: 12px 0;
-  width: 100%;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
   text-align: center;
-  position: absolute;
-  bottom: 10px;
-  left: 0;
+  padding: 0;
   transition: background-color 0.2s ease;
+  user-select: none;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .toggle-btn:hover {
