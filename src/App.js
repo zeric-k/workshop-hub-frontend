@@ -8,7 +8,6 @@ import CreateWorkshop from "./CreateWorkshop";
 import Spinner from "./Spinner";
 import "./styles/common.css"; // adjust path as needed
 
-
 function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
   const [spaces, setSpaces] = useState([]);
@@ -49,7 +48,8 @@ function WorkshopsPage() {
       );
       const data = await res.json();
       setWorkshops(data.payload.workshops || []);
-      const totalCount = data.payload.totalCount || (data.payload.workshops || []).length;
+      const totalCount =
+        data.payload.totalCount || (data.payload.workshops || []).length;
       setTotalPages(Math.ceil(totalCount / pageSize));
     } catch (err) {
       console.error("Error fetching workshops:", err);
@@ -62,17 +62,16 @@ function WorkshopsPage() {
     fetchSpaces();
   }, []);
 
- useEffect(() => {
-  fetchWorkshops(currentPage, pageSize, category, level, selectedSpace);
-}, [currentPage, pageSize, category, level, selectedSpace]); 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    fetchWorkshops(currentPage, pageSize, category, level, selectedSpace);
+  }, [currentPage, pageSize, category, level, selectedSpace]);
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
     setCurrentPage(1);
   };
-
-
 
   if (loading) return <Spinner />;
   //if (loading) return <p style={{ textAlign: "center" }}>Loading workshops...</p>;
@@ -85,7 +84,10 @@ function WorkshopsPage() {
       <div className="filters">
         <div className="filter-item">
           <label>Category:</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
             <option value="All">All</option>
             <option value="Bollywood">Bollywood</option>
             <option value="Hip Hop">Hip Hop</option>
@@ -125,11 +127,24 @@ function WorkshopsPage() {
       {workshops.map((w) => (
         <div key={w.id} className="card">
           <h2 className="title">{w.title}</h2>
-          <p className="info"><strong>Date:</strong> {w.date}</p>
-          <p className="info"><strong>Level:</strong> {w.level}</p>
-          <p className="info"><strong>Instructor:</strong> {w.instructor}</p>
-          <p className="info"><strong>Space:</strong> {w.space}</p>
-          <a href={w.location} target="_blank" rel="noreferrer" className="link">
+          <p className="info">
+            <strong>Date:</strong> {w.date}
+          </p>
+          <p className="info">
+            <strong>Level:</strong> {w.level}
+          </p>
+          <p className="info">
+            <strong>Instructor:</strong> {w.instructor}
+          </p>
+          <p className="info">
+            <strong>Space:</strong> {w.space}
+          </p>
+          <a
+            href={w.location}
+            target="_blank"
+            rel="noreferrer"
+            className="link"
+          >
             Location
           </a>
           &nbsp;&nbsp;
@@ -143,7 +158,11 @@ function WorkshopsPage() {
       <div className="pagination-bar">
         <div className="page-size-container">
           <span className="page-size-label">Show per page:</span>
-          <select value={pageSize} onChange={handlePageSizeChange} className="page-size-select">
+          <select
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            className="page-size-select"
+          >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
