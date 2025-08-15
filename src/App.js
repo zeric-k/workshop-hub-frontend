@@ -62,9 +62,9 @@ function WorkshopsPage() {
     fetchSpaces();
   }, []);
 
-  useEffect(() => {
-    fetchWorkshops();
-  }, [category, level, selectedSpace, currentPage, pageSize]);
+ useEffect(() => {
+  fetchWorkshops(currentPage, pageSize, category, level, selectedSpace);
+}, [currentPage, pageSize, category, level, selectedSpace]); 
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handlePageSizeChange = (e) => {
