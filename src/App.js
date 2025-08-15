@@ -62,10 +62,28 @@ function WorkshopsPage() {
     fetchSpaces();
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchWorkshops(currentPage, pageSize, category, level, selectedSpace);
+  const fetchWorkshops = useCallback(async () => {
+    setLoading(true);
+    try {
+      const query = `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?pageNo=${currentPage}&pageSize=${pageSize}&category=${category}&level=${level}&spaceId=${
+        selectedSpace !== "All" ? selectedSpace : ""
+      }`;
+      const response = await fetch(query);
+      const data = await response.json();
+      setWorkshops(data.payload.workshops);
+      const totalCount =
+        data.payload.totalCount || data.payload.workshops.length;
+      setTotalPages(Math.ceil(totalCount / pageSize));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, [currentPage, pageSize, category, level, selectedSpace]);
+
+  useEffect(() => {
+    fetchWorkshops();
+  }, [fetchWorkshops]);
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handlePageSizeChange = (e) => {
