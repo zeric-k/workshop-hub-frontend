@@ -32,7 +32,13 @@ function WorkshopsPage() {
     }
   };
 
-  // Fetch workshops based on filters and pagination
+
+  useEffect(() => {
+    fetchSpaces();
+  }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
   const fetchWorkshops = async () => {
     setLoading(true);
     try {
@@ -58,14 +64,9 @@ function WorkshopsPage() {
     }
   };
 
-  useEffect(() => {
-    fetchSpaces();
-  }, []);
+  fetchWorkshops();
+}, [currentPage, pageSize, category, level, selectedSpace]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchWorkshops(currentPage, pageSize, category, level, selectedSpace);
-  }, [currentPage, pageSize, category, level, selectedSpace]);
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handlePageSizeChange = (e) => {
