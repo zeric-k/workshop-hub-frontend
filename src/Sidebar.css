@@ -82,6 +82,10 @@
   top: 50%;
   transform: translateY(-50%);
 }
+.menu li.active {
+  background-color: #353535;
+  font-weight: bold;
+}
 
 .toggle-btn:hover {
   background-color: #444;

@@ -1,242 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
-import InstagramEmbed from "./InstagramEmbed";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Spaces from "./Spaces";
+import CreateWorkshop from "./CreateWorkshop";
+import Spinner from "./Spinner";
+import "./styles/common.css"; // adjust path as needed
 
-const workshops = [
-  {
-    id: 1,
-    title: "Ishq Di Bajjiyan",
-    date: "2025-08-17",
-    level: "Intermediate",
-    category: "Hip Hop",
-    instructor: "Naharjot Narang",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://www.instagram.com/reel/DNQDavzyhaK/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-  },
-  {
-    id: 2,
-    title: "Contemporary Dance Intensive",
-    date: "2025-09-12",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Move Academy",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE2",
-  },
-  {
-    id: 3,
-    title: "Hip-Hop Groove",
-    date: "2025-09-20",
-    level: "All Levels",
-    category: "Bollywood",
-    instructor: "Street Beats",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE3",
-  },
-  {
-    id: 4,
-    title: "Ishq Di Bajjiyan",
-    date: "2025-08-17",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Naharjot Narang",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://www.instagram.com/reel/DNQDavzyhaK/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-  },
-  {
-    id: 5,
-    title: "Contemporary Dance Intensive",
-    date: "2025-09-12",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Move Academy",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE2",
-  },
-  {
-    id: 6,
-    title: "Hip-Hop Groove",
-    date: "2025-09-20",
-    level: "All Levels",
-    category: "Bollywood",
-    instructor: "Street Beats",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE3",
-  },
-  {
-    id: 7,
-    title: "Ishq Di Bajjiyan",
-    date: "2025-08-17",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Naharjot Narang",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://www.instagram.com/reel/DNQDavzyhaK/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-  },
-  {
-    id: 8,
-    title: "Contemporary Dance Intensive",
-    date: "2025-09-12",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Move Academy",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE2",
-  },
-  {
-    id: 9,
-    title: "Hip-Hop Groove",
-    date: "2025-09-20",
-    level: "All Levels",
-    category: "Bollywood",
-    instructor: "Street Beats",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE3",
-  },
-  {
-    id: 10,
-    title: "Ishq Di Bajjiyan",
-    date: "2025-08-17",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Naharjot Narang",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://www.instagram.com/reel/DNQDavzyhaK/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-  },
-  {
-    id: 11,
-    title: "Contemporary Dance Intensive",
-    date: "2025-09-12",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Move Academy",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE2",
-  },
-  {
-    id: 12,
-    title: "Hip-Hop Groove",
-    date: "2025-09-20",
-    level: "All Levels",
-    category: "Bollywood",
-    instructor: "Street Beats",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE3",
-  },
-  {
-    id: 13,
-    title: "Ishq Di Bajjiyan",
-    date: "2025-08-17",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Naharjot Narang",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://www.instagram.com/reel/DNQDavzyhaK/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==",
-  },
-  {
-    id: 14,
-    title: "Contemporary Dance Intensive",
-    date: "2025-09-12",
-    level: "Intermediate",
-    category: "Bollywood",
-    instructor: "Move Academy",
-    space: "Dance An Addiction Studio, HSR Layout",
-    location: "https://maps.app.goo.gl/ZM5s8XkSWjhUd1qd6",
-    instagram: "https://instagram.com/p/EXAMPLE2",
-  }
-];
 
-function WorkshopCard({ workshop }) {
-  return (
-    <div className="card">
-      <h2 className="title">{workshop.title}</h2>
-      <p className="info">
-        <strong>Date:</strong> {workshop.date}
-      </p>
-      <p className="info">
-        <strong>Level:</strong> {workshop.level}
-      </p>
-      <p className="info">
-        <strong>Instructor:</strong> {workshop.instructor}
-      </p>
-      <p className="info">
-        <strong>Space:</strong> {workshop.space}
-      </p>
-      <a
-        href={workshop.location}
-        target="_blank"
-        rel="noreferrer"
-        className="link"
-      >
-        Location
-      </a>&nbsp;&nbsp;
-      <a
-        href={workshop.instagram}
-        target="_blank"
-        rel="noreferrer"
-        className="link"
-      >
-        View on Instagram
-      </a>
-    </div>
-  );
-}
-
-function App() {
+function WorkshopsPage() {
+  const [workshops, setWorkshops] = useState([]);
+  const [spaces, setSpaces] = useState([]);
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
+  const [selectedSpace, setSelectedSpace] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(4);
-  const totalPages = Math.ceil(workshops.length / pageSize);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-    const handlePageChange = (page) => {
-    setCurrentPage(page);
+  // Fetch spaces for dropdown
+  const fetchSpaces = async () => {
+    try {
+      const res = await fetch(
+        "https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/spaces?pageNo=1&pageSize=100"
+      );
+      const data = await res.json();
+      setSpaces(data.payload.spaces || []);
+    } catch (err) {
+      console.error("Error fetching spaces:", err);
+    }
   };
 
+  // Fetch workshops based on filters and pagination
+  const fetchWorkshops = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append("pageNo", currentPage);
+      params.append("pageSize", pageSize);
+      if (category !== "All") params.append("category", category);
+      if (level !== "All") params.append("level", level);
+      if (selectedSpace !== "All") params.append("spaceId", selectedSpace);
+
+      const res = await fetch(
+        `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
+      );
+      const data = await res.json();
+      setWorkshops(data.payload.workshops || []);
+      const totalCount = data.payload.totalCount || (data.payload.workshops || []).length;
+      setTotalPages(Math.ceil(totalCount / pageSize));
+    } catch (err) {
+      console.error("Error fetching workshops:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSpaces();
+  }, []);
+
+  useEffect(() => {
+    fetchWorkshops();
+  }, [category, level, selectedSpace, currentPage, pageSize]);
+
+  const handlePageChange = (page) => setCurrentPage(page);
   const handlePageSizeChange = (e) => {
-    setPageSize(parseInt(e.target.value));
-    setCurrentPage(1); // Reset to first page
+    setPageSize(Number(e.target.value));
+    setCurrentPage(1);
   };
 
-  const filteredWorkshops = workshops.filter((w) => {
-    return (
-      (category === "All" || w.category === category) &&
-      (level === "All" || w.level === level)
-    );
-  });
 
-  const indexOfLastWorkshop = currentPage * pageSize;
-  const indexOfFirstWorkshop = indexOfLastWorkshop - pageSize;
-  const currentWorkshops = workshops.filter((w) => {
-    return (
-      (category === "All" || w.category === category) &&
-      (level === "All" || w.level === level)
-    )}).slice(indexOfFirstWorkshop, indexOfLastWorkshop);
 
+  if (loading) return <Spinner />;
+  //if (loading) return <p style={{ textAlign: "center" }}>Loading workshops...</p>;
 
   return (
-    <div>
-      <Sidebar />
-      <Navbar />
     <div className="container">
       <h1>Upcoming Workshops</h1>
 
-      {/* Filter Section */}
+      {/* Filters */}
       <div className="filters">
         <div className="filter-item">
           <label>Category:</label>
@@ -259,21 +104,46 @@ function App() {
             <option value="Advanced">Advanced</option>
           </select>
         </div>
+
+        <div className="filter-item">
+          <label>Space:</label>
+          <select
+            value={selectedSpace}
+            onChange={(e) => setSelectedSpace(e.target.value)}
+          >
+            <option value="All">All</option>
+            {spaces.map((space) => (
+              <option key={space.id} value={space.id}>
+                {space.space}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-
-      {currentWorkshops.map((w) => (
-        <WorkshopCard key={w.id} workshop={w} />
+      {/* Workshop cards */}
+      {workshops.map((w) => (
+        <div key={w.id} className="card">
+          <h2 className="title">{w.title}</h2>
+          <p className="info"><strong>Date:</strong> {w.date}</p>
+          <p className="info"><strong>Level:</strong> {w.level}</p>
+          <p className="info"><strong>Instructor:</strong> {w.instructor}</p>
+          <p className="info"><strong>Space:</strong> {w.space}</p>
+          <a href={w.location} target="_blank" rel="noreferrer" className="link">
+            Location
+          </a>
+          &nbsp;&nbsp;
+          <a href={w.link} target="_blank" rel="noreferrer" className="link">
+            View on Instagram
+          </a>
+        </div>
       ))}
 
-        <div className="pagination-bar">
+      {/* Pagination */}
+      <div className="pagination-bar">
         <div className="page-size-container">
           <span className="page-size-label">Show per page:</span>
-          <select
-            className="page-size-select"
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
-          >
+          <select value={pageSize} onChange={handlePageSizeChange} className="page-size-select">
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -293,14 +163,21 @@ function App() {
           ))}
         </div>
       </div>
-
-
-        <div className="page-size-container">
-  
-</div>
-
     </div>
-    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Sidebar />
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<WorkshopsPage />} />
+        <Route path="/spaces" element={<Spaces />} />
+        <Route path="/create" element={<CreateWorkshop />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
