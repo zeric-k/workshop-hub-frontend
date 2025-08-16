@@ -173,9 +173,7 @@ function WorkshopsPage() {
           {/* New Book Workshop button */}
           <button
             className="book-workshop-btn"
-            onClick={() =>
-              alert(`Booking workshop: ${w.title} on ${w.date}`)
-            }
+            onClick={() => alert(`Booking workshop: ${w.title} on ${w.date}`)}
           >
             Register
           </button>
@@ -214,19 +212,29 @@ function WorkshopsPage() {
   );
 }
 
-function App() {
+function App({ userRole, toggleRole }) {
   return (
     <BrowserRouter>
-      <Sidebar />
-      <Navbar />
+      <Sidebar userRole={userRole} />
+      <Navbar userRole={userRole} toggleRole={toggleRole} />
       <Routes>
-        <Route path="/" element={<WorkshopsPage />} />
-        <Route path="/spaces" element={<Spaces />} />
-        <Route path="/create" element={<CreateWorkshop />} />
-        <Route path="/spaces/:spaceId/book" element={<SlotBooking />} />
-        <Route path="/my-space" element={<MySpace />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/user-booking" element={<UserBooking />} />
+        {userRole === "regularUser" && (
+          <>
+            <Route path="/" element={<WorkshopsPage />} />
+            <Route path="/create" element={<CreateWorkshop />} />
+            <Route path="/spaces/:spaceId/book" element={<SlotBooking />} />
+            <Route path="/user-booking" element={<UserBooking />} />
+            <Route path="/profile" element={<Profile />} />
+          </>
+        )}
+        {userRole === "spaceOwner" && (
+          <>
+            <Route path="/" element={<WorkshopsPage />} />
+            <Route path="/spaces" element={<Spaces />} />
+            <Route path="/create" element={<CreateWorkshop />} />
+            <Route path="/my-space" element={<MySpace />} />
+          </>
+        )}
       </Routes>
     </BrowserRouter>
   );

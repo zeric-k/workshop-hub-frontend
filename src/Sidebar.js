@@ -2,7 +2,7 @@ import "./Sidebar.css";
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Sidebar() {
+export default function Sidebar({ userRole }) {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -11,60 +11,84 @@ export default function Sidebar() {
     <div className={`sidebar ${expanded ? "expanded" : "collapsed"}`}>
       {expanded ? (
         <ul className="menu">
-          <li
-            onClick={() => navigate("/")}
-            className={location.pathname === "/" ? "active" : ""}
-          >
-            Workshops
-          </li>
-          <li
-            onClick={() => navigate("/create")}
-            className={location.pathname === "/create" ? "active" : ""}
-          >
-            Create Event
-          </li>
-          <li
-            onClick={() => navigate("/profile")}
-            className={location.pathname === "/profile" ? "active" : ""}
-          >
-            Profile
-          </li>
-          <li
-            onClick={() => navigate("/my-space")}
-            className={location.pathname === "/my-space" ? "active" : ""}
-          >
-            Bookings (Space)
-          </li>
-          <li
-            onClick={() => navigate("/spaces")}
-            className={location.pathname === "/spaces" ? "active" : ""}
-          >
-            Spaces
-          </li>
-          <li
-            onClick={() => navigate("/user-booking")}
-            className={location.pathname === "/user-booking" ? "active" : ""}
-          >
-            Booking (User)
-          </li>
-          <li
-            onClick={() => navigate("/approval")}
-            className={location.pathname === "/approval" ? "active" : ""}
-          >
-            Requests
-          </li>
-          <li
-            onClick={() => navigate("/profile")}
-            className={location.pathname === "/profile" ? "active" : ""}
-          >
-            My Groups
-          </li>
-          <li
-            onClick={() => navigate("/profile")}
-            className={location.pathname === "/profile" ? "active" : ""}
-          >
-            Explore
-          </li>
+          {userRole === "regularUser" && (
+            <>
+              <li
+                onClick={() => navigate("/")}
+                className={location.pathname === "/" ? "active" : ""}
+              >
+                Workshops
+              </li>
+              <li
+                onClick={() => navigate("/create")}
+                className={location.pathname === "/create" ? "active" : ""}
+              >
+                Create Event
+              </li>
+              <li
+                onClick={() => navigate("/profile")}
+                className={location.pathname === "/profile" ? "active" : ""}
+              >
+                Profile
+              </li>
+              <li
+                onClick={() => navigate("/spaces")}
+                className={location.pathname === "/spaces" ? "active" : ""}
+              >
+                Spaces
+              </li>
+              <li
+                onClick={() => navigate("/user-booking")}
+                className={
+                  location.pathname === "/user-booking" ? "active" : ""
+                }
+              >
+                Booking
+              </li>
+              <li
+                onClick={() => navigate("/profile")}
+                className={location.pathname === "/profile" ? "active" : ""}
+              >
+                My Groups
+              </li>
+              <li
+                onClick={() => navigate("/profile")}
+                className={location.pathname === "/profile" ? "active" : ""}
+              >
+                Explore
+              </li>
+            </>
+          )}
+          {userRole === "spaceOwner" && (
+            <>
+              <li
+                onClick={() => navigate("/")}
+                className={location.pathname === "/" ? "active" : ""}
+              >
+                Workshops
+              </li>
+              <li
+                onClick={() => navigate("/create")}
+                className={location.pathname === "/create" ? "active" : ""}
+              >
+                Create Event
+              </li>
+
+              <li
+                onClick={() => navigate("/my-space")}
+                className={location.pathname === "/my-space" ? "active" : ""}
+              >
+                Bookings
+              </li>
+
+              <li
+                onClick={() => navigate("/approval")}
+                className={location.pathname === "/approval" ? "active" : ""}
+              >
+                Requests
+              </li>
+            </>
+          )}
         </ul>
       ) : (
         <div className="menu-spacer"></div>
