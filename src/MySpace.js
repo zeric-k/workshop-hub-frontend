@@ -8,12 +8,14 @@ export default function MySpace() {
   const [slots, setSlots] = useState([]);
   const [hoverIndex, setHoverIndex] = useState(null);
   const [autoApprove, setAutoApprove] = useState(true);
-  const bookedSlotsData = ["09:00 AM - 10:00 AM", "01:30 PM - 02:30 PM"];
 
+  
+useEffect(() => {
   const generateSlots = () => {
     const times = [];
     let hour = 7;
     let minute = 0;
+    const bookedSlotsData = ["09:00 AM - 10:00 AM", "01:30 PM - 02:30 PM"];
     while (hour < 19 || (hour === 19 && minute === 0)) {
       const start = `${hour < 10 ? "0" + hour : hour}:${minute === 0 ? "00" : "30"}`;
       let endHour = minute === 0 ? hour : hour + 1;
@@ -38,16 +40,15 @@ export default function MySpace() {
     setSlots(times);
   };
 
-  useEffect(() => {
-    if (date) generateSlots();
-  }, [date]);
+  generateSlots();
+}, [date]); // only depends on date
+
 
   return (
     <div className="my-space-container">
       <div className="header-row">
         <div>
-          <h1>My Space</h1>
-          <h2>Bookings</h2>
+          <h1>Bookings</h1>
         </div>
 
         {/* Toggle on the right */}

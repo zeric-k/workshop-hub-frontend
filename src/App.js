@@ -10,6 +10,8 @@ import SlotBooking from "./SlotBooking";
 import "./styles/common.css"; // adjust path as needed
 import { useSearchParams } from "react-router-dom";
 import MySpace from "./MySpace";
+import Profile from "./Profile";
+import UserBooking from "./UserBooking";
 
 function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
@@ -22,7 +24,7 @@ function WorkshopsPage() {
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedSpace, setSelectedSpace] = useState(
-    () => searchParams.get("spaceId") || "All" // initialize from URL immediately
+    () => searchParams.get("spaceId") || "All"
   );
 
   // Fetch spaces for dropdown
@@ -42,7 +44,6 @@ function WorkshopsPage() {
     fetchSpaces();
   }, []);
 
-  // ⬇️ add this effect in WorkshopsPage
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedSpace !== "All") params.set("spaceId", String(selectedSpace));
@@ -51,10 +52,9 @@ function WorkshopsPage() {
     params.set("pageNo", String(currentPage));
     params.set("pageSize", String(pageSize));
 
-    setSearchParams(params, { replace: true }); // ⬅️ keep URL updated
+    setSearchParams(params, { replace: true });
   }, [currentPage, pageSize, selectedSpace, category, level, setSearchParams]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchWorkshops = async () => {
       setLoading(true);
@@ -91,7 +91,6 @@ function WorkshopsPage() {
   };
 
   if (loading) return <Spinner />;
-  //if (loading) return <p style={{ textAlign: "center" }}>Loading workshops...</p>;
 
   return (
     <div className="container">
@@ -156,6 +155,9 @@ function WorkshopsPage() {
           <p className="info">
             <strong>Space:</strong> {w.space}
           </p>
+          <p className="info">
+            <strong>Price:</strong> {w.price}
+          </p>
           <a
             href={w.location}
             target="_blank"
@@ -168,6 +170,15 @@ function WorkshopsPage() {
           <a href={w.link} target="_blank" rel="noreferrer" className="link">
             View on Instagram
           </a>
+          {/* New Book Workshop button */}
+          <button
+            className="book-workshop-btn"
+            onClick={() =>
+              alert(`Booking workshop: ${w.title} on ${w.date}`)
+            }
+          >
+            Register
+          </button>
         </div>
       ))}
 
@@ -212,8 +223,10 @@ function App() {
         <Route path="/" element={<WorkshopsPage />} />
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/create" element={<CreateWorkshop />} />
-        <Route path="/spaces/:spaceId/book" element={<SlotBooking />} /> 
+        <Route path="/spaces/:spaceId/book" element={<SlotBooking />} />
         <Route path="/my-space" element={<MySpace />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/user-booking" element={<UserBooking />} />
       </Routes>
     </BrowserRouter>
   );
