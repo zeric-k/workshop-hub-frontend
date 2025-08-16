@@ -61,4 +61,4 @@ jobs:
         with:
           app-name: 'dev-workshops-ui'
           slot-name: 'Production'
-          package: build       # Deploy the build folder
+          package: .
