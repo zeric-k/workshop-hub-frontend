@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import App from "./App";
-import Navbar from "./Navbar";
 
 export default function AppWrapper() {
   const [userRole, setUserRole] = useState("regularUser");
