@@ -27,6 +27,12 @@ export default function Sidebar() {
             Profile
           </li>
           <li
+            onClick={() => navigate("/my-space")}
+            className={location.pathname === "/my-space" ? "active" : ""}
+          >
+            My Space
+          </li>
+          <li
             onClick={() => navigate("/spaces")}
             className={location.pathname === "/spaces" ? "active" : ""}
           >

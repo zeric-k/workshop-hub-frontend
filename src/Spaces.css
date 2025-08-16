@@ -22,7 +22,12 @@
   margin-bottom: 16px; /* space between cards */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
+
 
 .space-card:hover {
   transform: translateY(-4px);
@@ -39,20 +44,30 @@
   word-wrap: break-word; /* prevent overflow */
 }
 
+/* Container for buttons and anchors inside each card */
+.space-actions {
+  display: flex;
+  gap: 12px; /* controls spacing between button and anchor */
+  margin-top: 12px; /* some space above actions */
+}
+
+/* Anchor styled as button */
 .space-link {
   display: inline-block;
-  background: #16186b;
+  background: #0078D4;
   color: white;
   padding: 12px 18px;
   border-radius: 8px;
+  border: 1px solid #0078D4;
   text-decoration: none;
   font-weight: bold;
   transition: background 0.25s ease;
 }
 
 .space-link:hover {
-  background: #203fa8;
+  background: #0362ab;
 }
+
 
 /* Pagination & page size container at bottom */
 .pagination-bar {
@@ -96,7 +111,24 @@
 }
 
 .pagination-buttons button.active {
-  background-color: #16186b;
+  background-color: #222;
   color: #fff;
-  border-color: #16186b;
+  border-color: #222;
+}
+
+/* Get Directions aligned bottom-right */
+.get-direction {
+  align-self: flex-end;   /* push it to the right */
+  margin-top: auto;       /* push it to bottom */
+  font-size: 0.85rem;
+  color: #555;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.get-direction:hover {
+  color: #000;
 }

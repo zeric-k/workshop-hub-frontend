@@ -6,18 +6,24 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Spaces from "./Spaces";
 import CreateWorkshop from "./CreateWorkshop";
 import Spinner from "./Spinner";
+import SlotBooking from "./SlotBooking";
 import "./styles/common.css"; // adjust path as needed
+import { useSearchParams } from "react-router-dom";
+import MySpace from "./MySpace";
 
 function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
   const [spaces, setSpaces] = useState([]);
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
-  const [selectedSpace, setSelectedSpace] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedSpace, setSelectedSpace] = useState(
+    () => searchParams.get("spaceId") || "All" // initialize from URL immediately
+  );
 
   // Fetch spaces for dropdown
   const fetchSpaces = async () => {
@@ -32,41 +38,51 @@ function WorkshopsPage() {
     }
   };
 
-
   useEffect(() => {
     fetchSpaces();
   }, []);
 
+  // ⬇️ add this effect in WorkshopsPage
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedSpace !== "All") params.set("spaceId", String(selectedSpace));
+    if (category !== "All") params.set("category", category);
+    if (level !== "All") params.set("level", level);
+    params.set("pageNo", String(currentPage));
+    params.set("pageSize", String(pageSize));
+
+    setSearchParams(params, { replace: true }); // ⬅️ keep URL updated
+  }, [currentPage, pageSize, selectedSpace, category, level, setSearchParams]);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-useEffect(() => {
-  const fetchWorkshops = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.append("pageNo", currentPage);
-      params.append("pageSize", pageSize);
-      if (category !== "All") params.append("category", category);
-      if (level !== "All") params.append("level", level);
-      if (selectedSpace !== "All") params.append("spaceId", selectedSpace);
+  useEffect(() => {
+    const fetchWorkshops = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        params.append("pageNo", currentPage);
+        params.append("pageSize", pageSize);
+        if (category !== "All") params.append("category", category);
+        if (level !== "All") params.append("level", level);
+        if (selectedSpace !== "All") params.append("spaceId", selectedSpace);
 
-      const res = await fetch(
-        `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
-      );
-      const data = await res.json();
-      setWorkshops(data.payload.workshops || []);
-      const totalCount =
-        data.payload.totalCount || (data.payload.workshops || []).length;
-      setTotalPages(Math.ceil(totalCount / pageSize));
-    } catch (err) {
-      console.error("Error fetching workshops:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const res = await fetch(
+          `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
+        );
+        const data = await res.json();
+        setWorkshops(data.payload.workshops || []);
+        const totalCount =
+          data.payload.totalCount || (data.payload.workshops || []).length;
+        setTotalPages(Math.ceil(totalCount / pageSize));
+      } catch (err) {
+        console.error("Error fetching workshops:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchWorkshops();
-}, [currentPage, pageSize, category, level, selectedSpace]);
-
+    fetchWorkshops();
+  }, [currentPage, pageSize, category, level, selectedSpace]);
 
   const handlePageChange = (page) => setCurrentPage(page);
   const handlePageSizeChange = (e) => {
@@ -196,6 +212,8 @@ function App() {
         <Route path="/" element={<WorkshopsPage />} />
         <Route path="/spaces" element={<Spaces />} />
         <Route path="/create" element={<CreateWorkshop />} />
+        <Route path="/spaces/:spaceId/book" element={<SlotBooking />} /> 
+        <Route path="/my-space" element={<MySpace />} />
       </Routes>
     </BrowserRouter>
   );

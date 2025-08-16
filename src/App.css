@@ -52,7 +52,7 @@
   display: inline-block;
   margin-top: 14px;
   padding: 8px 14px;
-  background: #16186b;
+  background: #0078D4;
   color: white;
   font-weight: 500;
   text-decoration: none;
@@ -61,7 +61,7 @@
 }
 
 .link:hover {
-  background: #203fa8;
+  background: #0362ab;
 }
 
 .pagination-bar {
@@ -95,7 +95,7 @@
 }
 
 .page-size-select:hover {
-  border-color: #2563eb;
+  border-color: #504f4f;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
@@ -110,9 +110,9 @@
 }
 
 .pagination-buttons button:hover {
-  background: #2563eb;
+  background: #4b4b4b;
   color: white;
-  border-color: #2563eb;
+  border-color: #4b4b4b;
 }
 
 .pagination-buttons .active {
