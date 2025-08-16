@@ -23,14 +23,47 @@ export default function Sidebar() {
           >
             Create Event
           </li>
-          <li className={location.pathname === "/profile" ? "active" : ""}>
+          <li
+            onClick={() => navigate("/profile")}
+            className={location.pathname === "/profile" ? "active" : ""}
+          >
             Profile
+          </li>
+          <li
+            onClick={() => navigate("/my-space")}
+            className={location.pathname === "/my-space" ? "active" : ""}
+          >
+            Bookings (Space)
           </li>
           <li
             onClick={() => navigate("/spaces")}
             className={location.pathname === "/spaces" ? "active" : ""}
           >
             Spaces
+          </li>
+          <li
+            onClick={() => navigate("/user-booking")}
+            className={location.pathname === "/user-booking" ? "active" : ""}
+          >
+            Booking (User)
+          </li>
+          <li
+            onClick={() => navigate("/approval")}
+            className={location.pathname === "/approval" ? "active" : ""}
+          >
+            Requests
+          </li>
+          <li
+            onClick={() => navigate("/profile")}
+            className={location.pathname === "/profile" ? "active" : ""}
+          >
+            My Groups
+          </li>
+          <li
+            onClick={() => navigate("/profile")}
+            className={location.pathname === "/profile" ? "active" : ""}
+          >
+            Explore
           </li>
         </ul>
       ) : (

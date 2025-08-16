@@ -1,0 +1,84 @@
+.user-booking-container {
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.user-booking-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.booking-type-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 0 auto 30px auto;
+  font-size: 1rem;
+}
+
+.booking-type-selection label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.booking-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.booking-section select,
+.booking-section input {
+  padding: 8px 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.book-btn {
+  padding: 8px 16px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.book-btn:hover {
+  background-color: #0078d4;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background-color: #f3f4f6;
+  color: #111;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.available-spaces {
+  margin-top: 20px;
+}
+
+.space-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
