@@ -23,10 +23,12 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install dependencies and build
-        run: |
-          npm ci               # Install exact dependencies including devDependencies
-          npm run build        # Build React app for production
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build React app
+        run: npm run build
+
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
@@ -60,3 +62,4 @@ jobs:
           app-name: 'dev-workshops-ui'
           slot-name: 'Production'
           package: build       # Deploy the build folder
+
