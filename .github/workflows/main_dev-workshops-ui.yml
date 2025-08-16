@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - dev-workshops-ui
 
 on:
@@ -10,34 +13,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read # Required for actions/checkout
 
     steps:
-      # Checkout the repo
       - uses: actions/checkout@v4
 
-      # Setup Node.js
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      # Install dependencies using npm ci for CI
-      - name: Install dependencies
-        run: npm ci
-
-      # Build and test
-      - name: Build and Test
+      - name: Install dependencies and build
         run: |
-          npm run build --if-present
-          npm run test --if-present || true  # Prevent CI from failing due to warnings/errors
+          npm ci               # Install exact dependencies including devDependencies
+          npm run build        # Build React app for production
 
-      # Upload artifact for deployment
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: build         # Only upload build folder
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,13 +42,11 @@ jobs:
       contents: read
 
     steps:
-      # Download build artifact
-      - name: Download artifact from build job
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      # Login to Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -61,11 +54,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_581C1FDCC13D4DF183E3974CBAA816AD }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D40CE1FCE1834CB99E258ECDD1F4E5EF }}
 
-      # Deploy to Azure Web App
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'dev-workshops-ui'
           slot-name: 'Production'
-          package: .
+          package: build       # Deploy the build folder
