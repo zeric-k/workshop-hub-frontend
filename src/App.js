@@ -225,12 +225,12 @@ function App({ userRole, toggleRole }) {
             <Route path="/spaces/:spaceId/book" element={<SlotBooking />} />
             <Route path="/user-booking" element={<UserBooking />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/spaces" element={<Spaces />} />
           </>
         )}
         {userRole === "spaceOwner" && (
           <>
             <Route path="/" element={<WorkshopsPage />} />
-            <Route path="/spaces" element={<Spaces />} />
             <Route path="/create" element={<CreateWorkshop />} />
             <Route path="/my-space" element={<MySpace />} />
           </>
