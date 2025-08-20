@@ -1,17 +1,19 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState, useCallback } from "react";
 import "./Toast.css";
 
 const ToastContext = createContext(null);
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
-  const push = (message, opts = {}) => {
+  const dismiss = useCallback((id) => {
+    setToasts((t) => t.filter((x) => x.id !== id));
+  }, []);
+  const push = useCallback((message, opts = {}) => {
     const id = Math.random().toString(36).slice(2);
     const toast = { id, message, type: opts.type || "info", duration: opts.duration || 2500 };
     setToasts((t) => [...t, toast]);
     setTimeout(() => dismiss(id), toast.duration);
-  };
-  const dismiss = (id) => setToasts((t) => t.filter((x) => x.id !== id));
+  }, [dismiss]);
   const value = useMemo(() => ({ push, dismiss }), [push, dismiss]);
   return (
     <ToastContext.Provider value={value}>

@@ -50,7 +50,7 @@ function WorkshopsPage() {
   const [startDate, setStartDate] = useState(defaultStart);
   const [endDate, setEndDate] = useState(defaultEnd);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize] = useState(6);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true); // true only for first page fetch
   const [appending, setAppending] = useState(false); // true when loading subsequent pages
