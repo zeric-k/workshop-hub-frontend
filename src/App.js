@@ -19,8 +19,7 @@ import Select from "./components/Select";
 import DatePicker from "./components/DatePicker";
 import BackToTop from "./components/BackToTop";
 import NotFound from "./components/NotFound";
-import Modal from "./components/Modal";
-import InstagramEmbed from "./InstagramEmbed";
+ 
 
 function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
@@ -58,7 +57,7 @@ function WorkshopsPage() {
     () => searchParams.get("spaceId") || "All"
   );
   const loadMoreRef = React.useRef(null);
-  const [mediaModal, setMediaModal] = useState({ open: false, type: null, src: null, title: "" });
+  
   const manualBatchRef = React.useRef(false);
 
   // No Instagram thumbnail scraping for card media
@@ -308,15 +307,6 @@ function WorkshopsPage() {
                     />
                   );
                 })()}
-                <div className="media-overlay">
-                  <button className="media-btn" onClick={() => {
-                    const thumb = w.imageUrl || assignFallbackImage(w);
-                    setMediaModal({ open: true, type: "image", src: thumb, title: w.title });
-                  }}>View</button>
-                  {w.link && (
-                    <button className="media-btn" onClick={() => setMediaModal({ open: true, type: "instagram", src: w.link, title: w.title })}>Preview</button>
-                  )}
-                </div>
               </div>
               <div className="card-header">
                 <h2 className="title">{w.title}</h2>
@@ -366,15 +356,6 @@ function WorkshopsPage() {
         </div>
       )}
 
-      {/* Media modal */}
-      <Modal isOpen={mediaModal.open} onClose={() => setMediaModal({ open: false, type: null, src: null, title: "" })} title={mediaModal.title} maxWidth={860}>
-        {mediaModal.type === "image" && (
-          <img src={mediaModal.src} alt={mediaModal.title} className="modal-media" />
-        )}
-        {mediaModal.type === "instagram" && (
-          <InstagramEmbed postUrl={mediaModal.src} />
-        )}
-      </Modal>
     </div>
   );
 }
