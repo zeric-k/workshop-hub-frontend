@@ -1,22 +1,218 @@
-/* ==================== Spinner Container ==================== */
+/* ==================== Design System ==================== */
+:root {
+  /* Colors */
+  --color-bg: #0b1220;
+  --color-surface: #0f172a;
+  --color-elevated: #111827;
+  --color-muted: #94a3b8;
+  --color-text: #e5e7eb;
+  --color-heading: #f8fafc;
+  --color-primary: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-accent: #f59e0b; /* amber */
+  --color-accent-contrast: #0b0c10;
+  --color-border: #1f2937;
+  --color-card-border: rgba(255, 255, 255, 0.08);
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ==================== Base / Typography ==================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text);
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(255, 255, 255, 0.04), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(255, 255, 255, 0.03), transparent 60%),
+    linear-gradient(180deg, #0a0b0f 0%, #0b0c10 50%, #0a0b0f 100%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography scale */
+h1, h2, h3, h4, h5, h6 { font-family: "Plus Jakarta Sans", "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; letter-spacing: -0.01em; margin: 0 0 8px 0; }
+h1 { font-weight: 800; font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); }
+h2 { font-weight: 700; font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.6rem); }
+h3 { font-weight: 700; font-size: clamp(1.1rem, 1.0rem + 0.4vw, 1.25rem); }
+p { line-height: 1.6; }
+.subtitle { color: var(--color-muted); letter-spacing: 0.2px; }
+
+* {
+  box-sizing: border-box;
+}
+
+/* Utilities */
+.container-narrow {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  background: var(--color-primary-600);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn.ghost {
+  background: transparent;
+  color: var(--color-text);
+}
+
+.input, select, input, textarea {
+  background: var(--color-elevated);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+label {
+  color: var(--color-muted);
+}
+
+/* Enhanced select dropdown styling */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  padding-right: 42px; /* space for chevron */
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px 18px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7l5 5 5-5' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+select:hover {
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+select:focus {
+  outline: none;
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+}
+
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==================== Cards ==================== */
+.card-surface {
+  background: linear-gradient(180deg, rgba(20, 24, 32, 0.9), rgba(18, 22, 30, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.card-surface.hoverable {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-surface.hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+/* ==================== Light Theme ==================== */
+[data-theme="light"] {
+  --color-bg: #f7f7fb;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-muted: #4b5563;
+  --color-text: #111827;
+  --color-heading: #0b1220;
+  --color-primary: #2563eb;
+  --color-primary-600: #1d4ed8;
+  --color-primary-700: #1e40af;
+  --color-accent: #16a34a;
+  --color-border: #e5e7eb;
+  --color-card-border: rgba(2, 6, 23, 0.08);
+}
+
+[data-theme="light"] body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(0, 0, 0, 0.04), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(0, 0, 0, 0.03), transparent 60%),
+    linear-gradient(180deg, #fafafa 0%, #f2f3f5 100%);
+}
+
+[data-theme="light"] .card-surface {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.85));
+}
+
+/* ==================== Animations ==================== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in { animation: fadeUp 0.3s ease forwards; }
+
+/* ==================== Spinner ==================== */
 .spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px; /* Adjust height as needed */
+  height: 200px;
 }
 
-/* ==================== Spinner ==================== */
 .spinner {
-  border: 6px solid #f3f3f3; /* Light gray */
-  border-top: 6px solid #3498db; /* Blue */
+  border: 6px solid rgba(255, 255, 255, 0.08);
+  border-top: 6px solid var(--color-primary);
   border-radius: 50%;
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
 }
 
-/* ==================== Spinner Animation ==================== */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

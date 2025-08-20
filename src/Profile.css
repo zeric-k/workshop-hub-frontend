@@ -1,18 +1,14 @@
 .profile-container {
-  max-width: 500px;
-  margin: 40px auto;
+  max-width: 560px;
+  margin: 80px auto 40px 260px;
   padding: 20px;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(20, 24, 32, 0.9), rgba(18, 22, 30, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
 }
 
-.profile-container h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: #333;
-}
+.profile-container h1 { text-align: left; margin-bottom: 20px; color: var(--color-heading); }
 
 .profile-row {
   display: flex;
@@ -21,18 +17,17 @@
   margin-bottom: 16px;
 }
 
-.profile-row label {
-  font-weight: bold;
-  color: #555;
-}
+.profile-row label { font-weight: 600; color: var(--color-muted); }
 
 .profile-row input {
   flex: 1;
-  padding: 8px;
+  padding: 10px 12px;
   margin-left: 20px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
   font-size: 0.95rem;
+  background: var(--color-elevated);
+  color: var(--color-text);
 }
 
 .profile-row span {
@@ -40,44 +35,18 @@
   margin-left: 20px;
 }
 
-.profile-actions {
-  text-align: center;
-  margin-top: 20px;
-}
+.profile-actions { text-align: left; margin-top: 20px; }
 
-.btn {
-  padding: 10px 18px;
-  margin: 0 8px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s ease;
-}
+.btn { padding: 12px 16px; margin-right: 8px; border-radius: 9999px; border: 1px solid rgba(245, 158, 11, 0.2); cursor: pointer; font-weight: 800; letter-spacing: 0.2px; transition: background 0.2s ease, transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
 
-.btn.edit {
-  background-color: #0078d4;
-  color: white;
-}
+.btn.edit { background-color: #0f0f10; color: #f9fafb; }
 
-.btn.edit:hover {
-  background-color: #005bb5;
-}
+.btn.edit:hover { background-color: #121214; border-color: rgba(245, 158, 11, 0.28); box-shadow: 0 10px 24px rgba(245, 158, 11, 0.2); transform: translateY(-1px); }
 
-.btn.save {
-  background-color: #28a745;
-  color: white;
-}
+.btn.save { background-color: #0f0f10; color: #f9fafb; }
 
-.btn.save:hover {
-  background-color: #218838;
-}
+.btn.save:hover { background-color: #121214; border-color: rgba(245, 158, 11, 0.28); box-shadow: 0 10px 24px rgba(245, 158, 11, 0.2); transform: translateY(-1px); }
 
-.btn.cancel {
-  background-color: #dc3545;
-  color: white;
-}
+.btn.cancel { background-color: #0f0f10; color: #f9fafb; }
 
-.btn.cancel:hover {
-  background-color: #c82333;
-}
+.btn.cancel:hover { background-color: #121214; border-color: rgba(245, 158, 11, 0.28); box-shadow: 0 10px 24px rgba(245, 158, 11, 0.2); transform: translateY(-1px); }

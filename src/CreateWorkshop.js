@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import DatePicker from "./components/DatePicker";
 import "./CreateWorkshop.css";
 
 export default function CreateWorkshop() {
@@ -96,12 +97,9 @@ export default function CreateWorkshop() {
 
         <label>
           Date:
-          <input
-            type="date"
-            name="date"
+          <DatePicker
             value={formData.date}
-            onChange={handleChange}
-            required
+            onChange={(val) => setFormData({ ...formData, date: val })}
           />
         </label>
 
