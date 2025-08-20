@@ -6,7 +6,6 @@ import { useUI } from "./context/UIContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Spaces from "./Spaces";
 import CreateWorkshop from "./CreateWorkshop";
-import Spinner from "./Spinner";
 import SkeletonGrid from "./components/Skeleton";
 import SlotBooking from "./SlotBooking";
 import "./styles/common.css"; // adjust path as needed
@@ -53,7 +52,6 @@ function WorkshopsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true); // true only for first page fetch
   const [appending, setAppending] = useState(false); // true when loading subsequent pages
   const [selectedSpace, setSelectedSpace] = useState(
@@ -67,14 +65,7 @@ function WorkshopsPage() {
 
   const localFallbacks = Array.from({ length: 50 }, (_, i) => `/images/dance-${String(i + 1).padStart(2, '0')}.jpg`);
 
-  const hashString = (s) => {
-    let h = 0;
-    for (let i = 0; i < s.length; i++) {
-      h = (h << 5) - h + s.charCodeAt(i);
-      h |= 0;
-    }
-    return Math.abs(h);
-  };
+  
 
   const imageMapRef = React.useRef(new Map());
   const imageQueueRef = React.useRef([]);
@@ -169,7 +160,6 @@ function WorkshopsPage() {
         const totalCountVal =
           data.payload.totalCount || (data.payload.workshops || []).length;
         setTotalPages(Math.ceil(totalCountVal / pageSize));
-        setTotalCount(totalCountVal);
       } catch (err) {
         console.error("Error fetching workshops:", err);
       } finally {
@@ -179,9 +169,8 @@ function WorkshopsPage() {
     };
 
     fetchWorkshops();
-  }, [currentPage, pageSize, category, level, selectedSpace]);
+  }, [currentPage, pageSize, category, level, selectedSpace, startDate, endDate]);
 
-  const handlePageChange = (page) => setCurrentPage(page);
   const hasMore = currentPage < totalPages;
 
   // Infinite scroll observer
@@ -242,10 +231,7 @@ function WorkshopsPage() {
       observer.disconnect();
     };
   }, [hasMore, loading, appending, totalPages, currentPage, pageSize, category, level, selectedSpace, startDate, endDate]);
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(1);
-  };
+  
 
   if (loading && currentPage === 1) return <SkeletonGrid count={6} />;
 

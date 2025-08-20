@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Sidebar({ userRole }) {
   const [expanded, setExpanded] = useState(false);
-  const { isSidebarOpen, closeSidebar } = useUI();
+  const { isSidebarOpen } = useUI();
   const navigate = useNavigate();
   const location = useLocation();
 
