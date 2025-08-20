@@ -305,12 +305,22 @@ function WorkshopsPage() {
         />
       ) : (
         <div className="card-grid">
-          {workshops.map((w) => (
+          {workshops.map((w, idx) => (
             <div key={w.id} className="card animate-in">
               <div className="media-thumb" style={{ aspectRatio: "16/9" }}>
                 {(() => {
                   const thumb = w.imageUrl || assignFallbackImage(w);
-                  return <img src={thumb} alt={w.title} loading="lazy" />;
+                  return (
+                    <img
+                      src={thumb}
+                      alt={w.title}
+                      loading="lazy"
+                      decoding="async"
+                      fetchpriority={idx < 6 ? "high" : "low"}
+                      width="1200"
+                      height="675"
+                    />
+                  );
                 })()}
                 <div className="media-overlay">
                   <button className="media-btn" onClick={() => {
