@@ -6,6 +6,7 @@
   top: 0;
   left: 0;
   width: 240px;
+  z-index: 100;
   transition: width 0.25s ease;
   display: flex;
   flex-direction: column;
