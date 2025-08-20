@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { useUI } from "./context/UIContext";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Spaces from "./Spaces";
 import CreateWorkshop from "./CreateWorkshop";
 import Spinner from "./Spinner";
+import SkeletonGrid from "./components/Skeleton";
 import SlotBooking from "./SlotBooking";
 import "./styles/common.css"; // adjust path as needed
 import { useSearchParams } from "react-router-dom";
@@ -17,6 +19,9 @@ import EmptyState from "./components/EmptyState";
 import Select from "./components/Select";
 import DatePicker from "./components/DatePicker";
 import BackToTop from "./components/BackToTop";
+import NotFound from "./components/NotFound";
+import Modal from "./components/Modal";
+import InstagramEmbed from "./InstagramEmbed";
 
 function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
@@ -55,6 +60,41 @@ function WorkshopsPage() {
     () => searchParams.get("spaceId") || "All"
   );
   const loadMoreRef = React.useRef(null);
+  const [mediaModal, setMediaModal] = useState({ open: false, type: null, src: null, title: "" });
+  const manualBatchRef = React.useRef(false);
+
+  // No Instagram thumbnail scraping for card media
+
+  const localFallbacks = Array.from({ length: 50 }, (_, i) => `/images/dance-${String(i + 1).padStart(2, '0')}.jpg`);
+
+  const hashString = (s) => {
+    let h = 0;
+    for (let i = 0; i < s.length; i++) {
+      h = (h << 5) - h + s.charCodeAt(i);
+      h |= 0;
+    }
+    return Math.abs(h);
+  };
+
+  const imageMapRef = React.useRef(new Map());
+  const imageQueueRef = React.useRef([]);
+  const seedQueue = () => {
+    const idxs = Array.from({ length: localFallbacks.length }, (_, i) => i);
+    for (let i = idxs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [idxs[i], idxs[j]] = [idxs[j], idxs[i]];
+    }
+    imageQueueRef.current = idxs;
+  };
+  const assignFallbackImage = (w) => {
+    const key = String(w.id || w.title || "dance");
+    if (imageMapRef.current.has(key)) return imageMapRef.current.get(key);
+    if (imageQueueRef.current.length === 0) seedQueue();
+    const nextIdx = imageQueueRef.current.shift();
+    const src = localFallbacks[nextIdx % localFallbacks.length];
+    imageMapRef.current.set(key, src);
+    return src;
+  };
 
   // Fetch spaces for dropdown
   const fetchSpaces = async () => {
@@ -94,6 +134,7 @@ function WorkshopsPage() {
 
   useEffect(() => {
     const fetchWorkshops = async () => {
+      if (manualBatchRef.current) return; // Skip when manual batch loader is running
       if (currentPage === 1) {
         setLoading(true);
       } else {
@@ -148,26 +189,65 @@ function WorkshopsPage() {
     if (!hasMore || loading || appending) return;
     const node = loadMoreRef.current;
     if (!node) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries[0];
-        if (first.isIntersecting) {
-          setCurrentPage((p) => (p < totalPages ? p + 1 : p));
+    const loadMoreBatch = async () => {
+      if (loading || appending) return;
+      manualBatchRef.current = true;
+      setAppending(true);
+      let appendedCount = 0;
+      let page = currentPage + 1;
+      try {
+        while (appendedCount < pageSize && page <= totalPages) {
+          const params = new URLSearchParams();
+          params.append("pageNo", page);
+          params.append("pageSize", pageSize);
+          if (category !== "All") params.append("category", category);
+          if (level !== "All") params.append("level", level);
+          if (selectedSpace !== "All") params.append("spaceId", selectedSpace);
+          const res = await fetch(
+            `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
+          );
+          const data = await res.json();
+          let pageItems = data.payload.workshops || [];
+          if (startDate || endDate) {
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+            if (end) end.setHours(23, 59, 59, 999);
+            pageItems = pageItems.filter((w) => {
+              const d = new Date(w.date);
+              if (start && d < start) return false;
+              if (end && d > end) return false;
+              return true;
+            });
+          }
+          setWorkshops((prev) => [...prev, ...pageItems]);
+          appendedCount += pageItems.length;
+          page += 1;
         }
-      },
-      { root: null, rootMargin: '200px', threshold: 0 }
-    );
+        setCurrentPage(page - 1);
+      } catch (e) {
+        console.error("Error loading more:", e);
+      } finally {
+        manualBatchRef.current = false;
+        setAppending(false);
+      }
+    };
+    const observer = new IntersectionObserver((entries) => {
+      const first = entries[0];
+      if (first.isIntersecting) {
+        loadMoreBatch();
+      }
+    }, { root: null, rootMargin: '200px', threshold: 0 });
     observer.observe(node);
     return () => {
       observer.disconnect();
     };
-  }, [hasMore, loading, appending, totalPages]);
+  }, [hasMore, loading, appending, totalPages, currentPage, pageSize, category, level, selectedSpace, startDate, endDate]);
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
     setCurrentPage(1);
   };
 
-  if (loading && currentPage === 1) return <Spinner />;
+  if (loading && currentPage === 1) return <SkeletonGrid count={6} />;
 
   return (
     <div className="container">
@@ -215,10 +295,7 @@ function WorkshopsPage() {
         </div>
       </div>
 
-      {/* Results bar */}
-      <div className="result-bar">
-        <span className="result-count">{totalCount} results</span>
-      </div>
+      {/* Results bar removed per request */}
 
       {/* Workshop cards */}
       {workshops.length === 0 ? (
@@ -230,6 +307,21 @@ function WorkshopsPage() {
         <div className="card-grid">
           {workshops.map((w) => (
             <div key={w.id} className="card animate-in">
+              <div className="media-thumb" style={{ aspectRatio: "16/9" }}>
+                {(() => {
+                  const thumb = w.imageUrl || assignFallbackImage(w);
+                  return <img src={thumb} alt={w.title} loading="lazy" />;
+                })()}
+                <div className="media-overlay">
+                  <button className="media-btn" onClick={() => {
+                    const thumb = w.imageUrl || assignFallbackImage(w);
+                    setMediaModal({ open: true, type: "image", src: thumb, title: w.title });
+                  }}>View</button>
+                  {w.link && (
+                    <button className="media-btn" onClick={() => setMediaModal({ open: true, type: "instagram", src: w.link, title: w.title })}>Preview</button>
+                  )}
+                </div>
+              </div>
               <div className="card-header">
                 <h2 className="title">{w.title}</h2>
                 <span className="badge">{w.level}</span>
@@ -277,14 +369,27 @@ function WorkshopsPage() {
           <div className="spinner"></div>
         </div>
       )}
+
+      {/* Media modal */}
+      <Modal isOpen={mediaModal.open} onClose={() => setMediaModal({ open: false, type: null, src: null, title: "" })} title={mediaModal.title} maxWidth={860}>
+        {mediaModal.type === "image" && (
+          <img src={mediaModal.src} alt={mediaModal.title} className="modal-media" />
+        )}
+        {mediaModal.type === "instagram" && (
+          <InstagramEmbed postUrl={mediaModal.src} />
+        )}
+      </Modal>
     </div>
   );
 }
 
 function App({ userRole, toggleRole, theme, toggleTheme }) {
+  const { isSidebarOpen, closeSidebar } = useUI();
   return (
     <BrowserRouter>
-      <Sidebar userRole={userRole} />
+      <div onClick={() => { if (isSidebarOpen) closeSidebar(); }}>
+        <Sidebar userRole={userRole} />
+      </div>
       <Navbar userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
       <Routes>
         {userRole === "regularUser" && (
@@ -295,6 +400,7 @@ function App({ userRole, toggleRole, theme, toggleTheme }) {
             <Route path="/user-booking" element={<UserBooking />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/spaces" element={<Spaces />} />
+            <Route path="*" element={<NotFound />} />
           </>
         )}
         {userRole === "spaceOwner" && (
@@ -302,6 +408,7 @@ function App({ userRole, toggleRole, theme, toggleTheme }) {
             <Route path="/" element={<WorkshopsPage />} />
             <Route path="/create" element={<CreateWorkshop />} />
             <Route path="/my-space" element={<MySpace />} />
+            <Route path="*" element={<NotFound />} />
           </>
         )}
       </Routes>

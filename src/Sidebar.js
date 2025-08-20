@@ -1,14 +1,16 @@
 import "./Sidebar.css";
 import React, { useState } from "react";
+import { useUI } from "./context/UIContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Sidebar({ userRole }) {
   const [expanded, setExpanded] = useState(false);
+  const { isSidebarOpen, closeSidebar } = useUI();
   const navigate = useNavigate();
   const location = useLocation();
 
   return (
-    <div className={`sidebar ${expanded ? "expanded" : "collapsed"}`}>
+    <div className={`sidebar ${expanded ? "expanded" : "collapsed"} ${isSidebarOpen ? "open" : ""}`} onClick={(e)=>{ e.stopPropagation(); }}>
       <ul className="menu">
         {userRole === "regularUser" && (
           <>

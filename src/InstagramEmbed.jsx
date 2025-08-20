@@ -3,12 +3,31 @@ import React, { useEffect } from "react";
 
 export default function InstagramEmbed({ postUrl }) {
   useEffect(() => {
-    // Load Instagram embed script when component mounts
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = "//www.instagram.com/embed.js";
-    document.body.appendChild(script);
-  }, []);
+    const process = () => {
+      try {
+        // @ts-ignore
+        if (window.instgrm && window.instgrm.Embeds && window.instgrm.Embeds.process) {
+          // @ts-ignore
+          window.instgrm.Embeds.process();
+        }
+      } catch (_) {}
+    };
+
+    if (!window.instgrm || !window.instgrm.Embeds) {
+      const existing = document.querySelector('script[src="//www.instagram.com/embed.js"]');
+      if (!existing) {
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = "//www.instagram.com/embed.js";
+        script.onload = process;
+        document.body.appendChild(script);
+      } else {
+        existing.addEventListener("load", process, { once: true });
+      }
+    } else {
+      process();
+    }
+  }, [postUrl]);
 
   return (
     <blockquote

@@ -12,6 +12,8 @@ export default function Select({
   const [open, setOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef(null);
+  const menuRef = useRef(null);
+  const [placement, setPlacement] = useState("bottom");
 
   const normalizedOptions = useMemo(
     () => options.map((opt) =>
@@ -35,6 +37,32 @@ export default function Select({
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
+
+  // Compute menu placement (top/bottom) when opening and on viewport changes
+  useEffect(() => {
+    if (!open) return;
+    const computePlacement = () => {
+      if (!containerRef.current) return;
+      const triggerRect = containerRef.current.getBoundingClientRect();
+      const menuH = menuRef.current ? menuRef.current.offsetHeight : 260;
+      const spaceBelow = window.innerHeight - triggerRect.bottom;
+      const spaceAbove = triggerRect.top;
+      if (spaceBelow < menuH + 12 && spaceAbove > spaceBelow) {
+        setPlacement("top");
+      } else {
+        setPlacement("bottom");
+      }
+    };
+    // compute after render paint
+    const id = requestAnimationFrame(computePlacement);
+    window.addEventListener("resize", computePlacement);
+    window.addEventListener("scroll", computePlacement, { passive: true });
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener("resize", computePlacement);
+      window.removeEventListener("scroll", computePlacement);
+    };
+  }, [open]);
 
   const handleKeyDown = (e) => {
     if (disabled) return;
@@ -65,7 +93,7 @@ export default function Select({
   return (
     <div
       ref={containerRef}
-      className={`ui-select ${open ? "open" : ""} ${disabled ? "disabled" : ""} ${className}`}
+      className={`ui-select ${open ? "open" : ""} ${placement} ${disabled ? "disabled" : ""} ${className}`}
       tabIndex={disabled ? -1 : 0}
       role="combobox"
       aria-expanded={open}
@@ -84,7 +112,7 @@ export default function Select({
         <span className="chevron" aria-hidden>▾</span>
       </button>
       {open && (
-        <ul className="ui-select-menu" role="listbox">
+        <ul ref={menuRef} className="ui-select-menu" role="listbox">
           {normalizedOptions.map((opt, idx) => {
             const isSelected = selected && selected.value === opt.value;
             const isHighlighted = highlightedIndex === idx;

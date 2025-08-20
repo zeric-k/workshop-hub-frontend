@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
   color: var(--color-text);
   backdrop-filter: blur(10px);
   background: linear-gradient(180deg, rgba(15, 16, 20, 0.85), rgba(15, 16, 20, 0.6));
@@ -64,3 +65,11 @@
 }
 
 .theme-toggle:hover { background: rgba(245, 158, 11, 0.1); box-shadow: var(--shadow-sm); }
+
+.hamburger { display: none; margin-right: 8px; background: #0f0f10; color: #f3f4f6; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.hamburger:hover { background: rgba(245, 158, 11, 0.1); }
+
+@media (max-width: 680px) {
+  .hamburger { display: inline-block; }
+  .nav-links { display: none; }
+}

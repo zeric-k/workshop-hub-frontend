@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import App from "./App";
+import { UIProvider } from "./context/UIContext";
+import { ToastProvider } from "./components/Toast";
 
 export default function AppWrapper() {
   const [userRole, setUserRole] = useState("regularUser");
@@ -22,5 +24,11 @@ export default function AppWrapper() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  return <App userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />;
+  return (
+    <UIProvider>
+      <ToastProvider>
+        <App userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
+      </ToastProvider>
+    </UIProvider>
+  );
 }

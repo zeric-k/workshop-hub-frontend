@@ -11,8 +11,9 @@ export default function Spaces() {
   const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(6);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   const goToWorkshops = (spaceId) => {
@@ -24,7 +25,7 @@ export default function Spaces() {
 };
 
 
-  const fetchSpaces = async (pageNo = 1, size = 5) => {
+  const fetchSpaces = async (pageNo = 1, size = 6) => {
     setLoading(true);
     try {
       const response = await fetch(
@@ -36,8 +37,9 @@ export default function Spaces() {
       const data = await response.json();
       setSpaces(data.payload.spaces);
 
-      const totalCount = data.payload.totalCount || data.payload.spaces.length;
-      setTotalPages(Math.ceil(totalCount / size));
+      const total = data.payload.totalCount || data.payload.spaces.length;
+      setTotalCount(total);
+      setTotalPages(Math.ceil(total / size));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -130,7 +132,7 @@ export default function Spaces() {
           <Select
             value={String(pageSize)}
             onChange={(v)=>{ setPageSize(Number(v)); setCurrentPage(1);} }
-            options={[{label:"5",value:"5"},{label:"10",value:"10"},{label:"20",value:"20"}]}
+            options={[{label:"6",value:"6"},{label:"12",value:"12"},{label:"24",value:"24"}]}
           />
         </div>
 
