@@ -1,38 +1,66 @@
 /* src/Navbar.css */
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  background-color: #222;
+  justify-content: space-between;
   padding: 12px 20px;
-  color: white;
+  color: var(--color-text);
+  backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(15, 16, 20, 0.85), rgba(15, 16, 20, 0.6));
+  border-bottom: 1px solid rgba(245, 158, 11, 0.15);
 }
 
-.navbar .logo {
-  font-size: 1.3rem;
-  font-weight: bold;
-}
+.navbar .logo { font-family: "Plus Jakarta Sans", "Inter", system-ui; font-size: 1.15rem; font-weight: 800; letter-spacing: -0.2px; color: var(--color-heading); }
 
-.logo {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.5rem;
-  font-weight: bold;
+.nav-links {
+  display: flex;
+  align-items: center;
 }
 
 .nav-links a {
-  color: white;
+  color: var(--color-text);
   text-decoration: none;
-  margin-left: 20px;
-  font-size: 1rem;
+  margin-left: 18px;
+  font-size: 0.98rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-.nav-links a:hover {
-  color: #fbbf24;
+.nav-links a:hover { background: rgba(245, 158, 11, 0.1); color: var(--color-heading); }
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
 }
 
-a {
-  margin-right: 20px; /* adds space after each link */
+.role-toggle {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: #0f0f10;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
+.role-toggle:hover { background: rgba(245, 158, 11, 0.1); box-shadow: var(--shadow-sm); }
+
+.theme-toggle {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: #0f0f10;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover { background: rgba(245, 158, 11, 0.1); box-shadow: var(--shadow-sm); }

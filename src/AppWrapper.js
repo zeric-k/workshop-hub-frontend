@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import App from "./App";
 
 export default function AppWrapper() {
   const [userRole, setUserRole] = useState("regularUser");
+  const [theme, setTheme] = useState(() =>
+    typeof window !== "undefined" ? localStorage.getItem("theme") || "dark" : "dark"
+  );
 
   const toggleRole = () => {
     setUserRole((prev) =>
@@ -10,5 +13,14 @@ export default function AppWrapper() {
     );
   };
 
-  return <App userRole={userRole} toggleRole={toggleRole} />;
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  return <App userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />;
 }

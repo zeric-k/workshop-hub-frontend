@@ -1,0 +1,18 @@
+.ui-datepicker { position: relative; display: inline-block; }
+.ui-datepicker-trigger { display: inline-flex; align-items: center; gap: 10px; background: #0f0f10; color: #f3f4f6; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+.ui-datepicker-trigger .value.placeholder { color: #9ca3af; }
+.ui-datepicker-trigger:hover { border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15); }
+
+.ui-datepicker-popover { position: absolute; top: calc(100% + 6px); left: 0; background: linear-gradient(180deg, rgba(20,24,32,0.96), rgba(18,22,30,0.94)); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; box-shadow: 0 18px 40px rgba(0,0,0,0.45); padding: 10px; z-index: 1200; }
+.ui-datepicker-popover .header { display: grid; grid-template-columns: 32px 1fr 32px; align-items: center; gap: 8px; margin-bottom: 8px; color: #f9fafb; }
+.ui-datepicker-popover .header .nav { background: #0f0f10; color: #f9fafb; border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 9999px; width: 32px; height: 32px; cursor: pointer; }
+.ui-datepicker-popover .month-label { text-align: center; font-weight: 800; }
+.ui-datepicker-popover .grid { display: grid; grid-template-columns: repeat(7, 36px); grid-auto-rows: 36px; gap: 6px; }
+.ui-datepicker-popover .dow { color: #9ca3af; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+.ui-datepicker-popover .cell { background: #0f0f10; color: #e5e7eb; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; font-size: 14px; cursor: pointer; }
+.ui-datepicker-popover .cell.other { opacity: 0.5; }
+.ui-datepicker-popover .cell.today { border-color: rgba(245, 158, 11, 0.4); }
+.ui-datepicker-popover .cell.selected { background: rgba(245, 158, 11, 0.22); color: #fde68a; border-color: rgba(245, 158, 11, 0.5); }
+.ui-datepicker-popover .cell:hover { background: rgba(245, 158, 11, 0.12); }
+
+

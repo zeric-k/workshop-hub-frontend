@@ -52,10 +52,15 @@ export default function UserBooking() {
 
   return (
     <div className="user-booking-container">
-      <h1>User Booking</h1>
+      <div className="hero card-surface" style={{ marginBottom: 16 }}>
+        <div>
+          <h1>User Booking</h1>
+          <p className="subtitle">Book by space or by date & time.</p>
+        </div>
+      </div>
 
       {!bookingType && (
-        <div className="booking-type-selection">
+        <div className="booking-type-selection card-surface" style={{ padding: 16 }}>
           <h3>How do you want to book?</h3>
           <label>
             <input
@@ -80,7 +85,7 @@ export default function UserBooking() {
 
       {/* Booking by Space */}
       {bookingType === "space" && (
-        <div className="booking-section">
+        <div className="booking-section card-surface" style={{ padding: 16 }}>
           <h3>Select Space:</h3>
           <select
             value={selectedSpace}
@@ -107,7 +112,7 @@ export default function UserBooking() {
 
       {/* Booking by Date & Time */}
       {bookingType === "datetime" && (
-        <div className="booking-section">
+        <div className="booking-section card-surface" style={{ padding: 16 }}>
           <h3>Select Date & Time:</h3>
           <input
             type="date"

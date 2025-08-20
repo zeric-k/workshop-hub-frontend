@@ -12,20 +12,49 @@ import { useSearchParams } from "react-router-dom";
 import MySpace from "./MySpace";
 import Profile from "./Profile";
 import UserBooking from "./UserBooking";
+import Hero from "./components/Hero";
+import EmptyState from "./components/EmptyState";
+import Select from "./components/Select";
+import DatePicker from "./components/DatePicker";
+import BackToTop from "./components/BackToTop";
 
 function WorkshopsPage() {
   const [workshops, setWorkshops] = useState([]);
   const [spaces, setSpaces] = useState([]);
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(4);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  const formatYMD = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
+  const defaultStart = (() => {
+    const sp = searchParams.get("startDate");
+    if (sp) return sp;
+    const t = new Date();
+    return formatYMD(t);
+  })();
+  const defaultEnd = (() => {
+    const ep = searchParams.get("endDate");
+    if (ep) return ep;
+    const t = new Date();
+    t.setDate(t.getDate() + 21);
+    return formatYMD(t);
+  })();
+  const [startDate, setStartDate] = useState(defaultStart);
+  const [endDate, setEndDate] = useState(defaultEnd);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true); // true only for first page fetch
+  const [appending, setAppending] = useState(false); // true when loading subsequent pages
   const [selectedSpace, setSelectedSpace] = useState(
     () => searchParams.get("spaceId") || "All"
   );
+  const loadMoreRef = React.useRef(null);
 
   // Fetch spaces for dropdown
   const fetchSpaces = async () => {
@@ -51,13 +80,25 @@ function WorkshopsPage() {
     if (level !== "All") params.set("level", level);
     params.set("pageNo", String(currentPage));
     params.set("pageSize", String(pageSize));
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
 
     setSearchParams(params, { replace: true });
-  }, [currentPage, pageSize, selectedSpace, category, level, setSearchParams]);
+  }, [currentPage, pageSize, selectedSpace, category, level, startDate, endDate, setSearchParams]);
+
+  // Reset to first page whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+    setWorkshops([]);
+  }, [category, level, selectedSpace, startDate, endDate]);
 
   useEffect(() => {
     const fetchWorkshops = async () => {
-      setLoading(true);
+      if (currentPage === 1) {
+        setLoading(true);
+      } else {
+        setAppending(true);
+      }
       try {
         const params = new URLSearchParams();
         params.append("pageNo", currentPage);
@@ -70,14 +111,29 @@ function WorkshopsPage() {
           `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
         );
         const data = await res.json();
-        setWorkshops(data.payload.workshops || []);
-        const totalCount =
+        let newItems = data.payload.workshops || [];
+        // Client-side date filter
+        if (startDate || endDate) {
+          const start = startDate ? new Date(startDate) : null;
+          const end = endDate ? new Date(endDate) : null;
+          if (end) end.setHours(23,59,59,999);
+          newItems = newItems.filter((w) => {
+            const d = new Date(w.date);
+            if (start && d < start) return false;
+            if (end && d > end) return false;
+            return true;
+          });
+        }
+        setWorkshops((prev) => (currentPage === 1 ? newItems : [...prev, ...newItems]));
+        const totalCountVal =
           data.payload.totalCount || (data.payload.workshops || []).length;
-        setTotalPages(Math.ceil(totalCount / pageSize));
+        setTotalPages(Math.ceil(totalCountVal / pageSize));
+        setTotalCount(totalCountVal);
       } catch (err) {
         console.error("Error fetching workshops:", err);
       } finally {
         setLoading(false);
+        setAppending(false);
       }
     };
 
@@ -85,138 +141,151 @@ function WorkshopsPage() {
   }, [currentPage, pageSize, category, level, selectedSpace]);
 
   const handlePageChange = (page) => setCurrentPage(page);
+  const hasMore = currentPage < totalPages;
+
+  // Infinite scroll observer
+  useEffect(() => {
+    if (!hasMore || loading || appending) return;
+    const node = loadMoreRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting) {
+          setCurrentPage((p) => (p < totalPages ? p + 1 : p));
+        }
+      },
+      { root: null, rootMargin: '200px', threshold: 0 }
+    );
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore, loading, appending, totalPages]);
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
     setCurrentPage(1);
   };
 
-  if (loading) return <Spinner />;
+  if (loading && currentPage === 1) return <Spinner />;
 
   return (
     <div className="container">
-      <h1>Upcoming Workshops</h1>
+      <Hero
+        title="Discover Workshops"
+        subtitle="Browse and register for upcoming dance workshops across spaces."
+      />
 
       {/* Filters */}
       <div className="filters">
         <div className="filter-item">
           <label>Category:</label>
-          <select
+          <Select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="All">All</option>
-            <option value="Bollywood">Bollywood</option>
-            <option value="Hip Hop">Hip Hop</option>
-            <option value="Contemporary">Contemporary</option>
-            <option value="Salsa">Salsa</option>
-            <option value="Indian Classical">Indian Classical</option>
-          </select>
+            onChange={setCategory}
+            options={["All","Bollywood","Hip Hop","Contemporary","Salsa","Indian Classical"]}
+          />
         </div>
 
         <div className="filter-item">
           <label>Level:</label>
-          <select value={level} onChange={(e) => setLevel(e.target.value)}>
-            <option value="All">All</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-          </select>
+          <Select
+            value={level}
+            onChange={setLevel}
+            options={["All","Beginner","Intermediate","Advanced"]}
+          />
         </div>
 
         <div className="filter-item">
           <label>Space:</label>
-          <select
+          <Select
             value={selectedSpace}
-            onChange={(e) => setSelectedSpace(e.target.value)}
-          >
-            <option value="All">All</option>
-            {spaces.map((space) => (
-              <option key={space.id} value={space.id}>
-                {space.space}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedSpace}
+            options={[{label:"All", value:"All"}, ...spaces.map(s=>({label:s.space, value:String(s.id)}))]}
+          />
         </div>
+
+        <div className="filter-item">
+          <label>From:</label>
+          <DatePicker value={startDate} onChange={setStartDate} />
+        </div>
+        <div className="filter-item">
+          <label>To:</label>
+          <DatePicker value={endDate} onChange={setEndDate} />
+        </div>
+      </div>
+
+      {/* Results bar */}
+      <div className="result-bar">
+        <span className="result-count">{totalCount} results</span>
       </div>
 
       {/* Workshop cards */}
-      {workshops.map((w) => (
-        <div key={w.id} className="card">
-          <h2 className="title">{w.title}</h2>
-          <p className="info">
-            <strong>Date:</strong> {w.date}
-          </p>
-          <p className="info">
-            <strong>Level:</strong> {w.level}
-          </p>
-          <p className="info">
-            <strong>Instructor:</strong> {w.instructor}
-          </p>
-          <p className="info">
-            <strong>Space:</strong> {w.space}
-          </p>
-          <p className="info">
-            <strong>Price:</strong> {w.price}
-          </p>
-          <a
-            href={w.location}
-            target="_blank"
-            rel="noreferrer"
-            className="link"
-          >
-            Location
-          </a>
-          &nbsp;&nbsp;
-          <a href={w.link} target="_blank" rel="noreferrer" className="link">
-            View on Instagram
-          </a>
-          {/* New Book Workshop button */}
-          <button
-            className="book-workshop-btn"
-            onClick={() => alert(`Booking workshop: ${w.title} on ${w.date}`)}
-          >
-            Register
-          </button>
-        </div>
-      ))}
-
-      {/* Pagination */}
-      <div className="pagination-bar">
-        <div className="page-size-container">
-          <span className="page-size-label">Show per page:</span>
-          <select
-            value={pageSize}
-            onChange={handlePageSizeChange}
-            className="page-size-select"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
-
-        <div className="pagination-buttons">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              className={currentPage === i + 1 ? "active" : ""}
-              onClick={() => handlePageChange(i + 1)}
-            >
-              {i + 1}
-            </button>
+      {workshops.length === 0 ? (
+        <EmptyState
+          title="No workshops found"
+          description="Try adjusting filters or check back later for new events."
+        />
+      ) : (
+        <div className="card-grid">
+          {workshops.map((w) => (
+            <div key={w.id} className="card animate-in">
+              <div className="card-header">
+                <h2 className="title">{w.title}</h2>
+                <span className="badge">{w.level}</span>
+              </div>
+              <p className="info">
+                <strong>Date:</strong> {w.date}
+              </p>
+              <p className="info">
+                <strong>Instructor:</strong> {w.instructor}
+              </p>
+              <p className="info">
+                <strong>Space:</strong> {w.space}
+              </p>
+              <p className="info">
+                <strong>Price:</strong> {w.price}
+              </p>
+              <div className="actions">
+                <a
+                  href={w.location}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="link"
+                >
+                  Location
+                </a>
+                <a href={w.link} target="_blank" rel="noreferrer" className="link">
+                  Instagram
+                </a>
+                <button
+                  className="book-workshop-btn"
+                  onClick={() => alert(`Booking workshop: ${w.title} on ${w.date}`)}
+                >
+                  Register
+                </button>
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      )}
+
+      {/* Infinite loader */}
+      <div ref={loadMoreRef} />
+      {appending && (
+        <div className="spinner-container" style={{ height: 80 }}>
+          <div className="spinner"></div>
+        </div>
+      )}
     </div>
   );
 }
 
-function App({ userRole, toggleRole }) {
+function App({ userRole, toggleRole, theme, toggleTheme }) {
   return (
     <BrowserRouter>
       <Sidebar userRole={userRole} />
-      <Navbar userRole={userRole} toggleRole={toggleRole} />
+      <Navbar userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
       <Routes>
         {userRole === "regularUser" && (
           <>
@@ -236,6 +305,7 @@ function App({ userRole, toggleRole }) {
           </>
         )}
       </Routes>
+      <BackToTop />
     </BrowserRouter>
   );
 }
