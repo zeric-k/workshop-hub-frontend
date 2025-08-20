@@ -13,7 +13,6 @@ export default function Spaces() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const navigate = useNavigate();
 
   const goToWorkshops = (spaceId) => {
@@ -38,7 +37,6 @@ export default function Spaces() {
       setSpaces(data.payload.spaces);
 
       const total = data.payload.totalCount || data.payload.spaces.length;
-      setTotalCount(total);
       setTotalPages(Math.ceil(total / size));
     } catch (err) {
       setError(err.message);
@@ -70,10 +68,7 @@ export default function Spaces() {
     pages.push(total);
     return pages;
   };
-  const handlePageSizeChange = (e) => {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(1);
-  };
+  
 
   if (loading) return <Spinner />;
   if (error) return <p>Error fetching spaces: {error}</p>;

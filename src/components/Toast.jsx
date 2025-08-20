@@ -12,7 +12,7 @@ export function ToastProvider({ children }) {
     setTimeout(() => dismiss(id), toast.duration);
   };
   const dismiss = (id) => setToasts((t) => t.filter((x) => x.id !== id));
-  const value = useMemo(() => ({ push, dismiss }), [dismiss]);
+  const value = useMemo(() => ({ push, dismiss }), [push, dismiss]);
   return (
     <ToastContext.Provider value={value}>
       {children}

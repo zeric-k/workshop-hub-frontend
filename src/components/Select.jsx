@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, useId } from "react";
 import "./Select.css";
 
 export default function Select({
@@ -14,6 +14,7 @@ export default function Select({
   const containerRef = useRef(null);
   const menuRef = useRef(null);
   const [placement, setPlacement] = useState("bottom");
+  const listboxId = useId();
 
   const normalizedOptions = useMemo(
     () => options.map((opt) =>
@@ -96,6 +97,7 @@ export default function Select({
       className={`ui-select ${open ? "open" : ""} ${placement} ${disabled ? "disabled" : ""} ${className}`}
       tabIndex={disabled ? -1 : 0}
       role="combobox"
+      aria-controls={listboxId}
       aria-expanded={open}
       aria-haspopup="listbox"
       onKeyDown={handleKeyDown}
@@ -112,7 +114,7 @@ export default function Select({
         <span className="chevron" aria-hidden>▾</span>
       </button>
       {open && (
-        <ul ref={menuRef} className="ui-select-menu" role="listbox">
+        <ul id={listboxId} ref={menuRef} className="ui-select-menu" role="listbox">
           {normalizedOptions.map((opt, idx) => {
             const isSelected = selected && selected.value === opt.value;
             const isHighlighted = highlightedIndex === idx;
