@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import App from "./App";
 import { UIProvider } from "./context/UIContext";
+import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./components/Toast";
 
 export default function AppWrapper() {
@@ -26,9 +27,11 @@ export default function AppWrapper() {
 
   return (
     <UIProvider>
-      <ToastProvider>
-        <App userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
-      </ToastProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <App userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
+        </ToastProvider>
+      </AuthProvider>
     </UIProvider>
   );
 }

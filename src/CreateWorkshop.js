@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "./context/AuthContext";
+import { apiFetch } from "./api";
 import DatePicker from "./components/DatePicker";
 import "./CreateWorkshop.css";
 
 export default function CreateWorkshop() {
+  const { token } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -48,20 +51,10 @@ export default function CreateWorkshop() {
     }
 
     try {
-      const response = await fetch(
-        "https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+      await apiFetch(
+        "/api/v1/workshops",
+        { method: "POST", body: formData, token }
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to create workshop");
-      }
 
       alert("Workshop created successfully!");
       // Reset form
