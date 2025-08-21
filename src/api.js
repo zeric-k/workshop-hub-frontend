@@ -1,9 +1,12 @@
-export async function apiFetch(path, { method = "GET", headers = {}, body, token } = {}) {
+export async function apiFetch(path, { method = "GET", headers = {}, body, token, role } = {}) {
   const url = path.startsWith("http") ? path : `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net${path}`;
   const finalHeaders = { "Content-Type": "application/json", ...headers };
   if (token) {
     // token expected like "Bearer abc..." per backend response
     finalHeaders["Authorization"] = token.startsWith("Bearer") ? token : `Bearer ${token}`;
+  }
+  if (role) {
+    finalHeaders["X-User-Role"] = role;
   }
   const res = await fetch(url, {
     method,

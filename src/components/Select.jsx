@@ -13,6 +13,7 @@ export default function Select({
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef(null);
   const menuRef = useRef(null);
+  const buttonRef = useRef(null);
   const [placement, setPlacement] = useState("bottom");
   const listboxId = useId();
 
@@ -85,6 +86,9 @@ export default function Select({
         const opt = normalizedOptions[highlightedIndex];
         onChange?.(opt.value);
         setOpen(false);
+      } else {
+        // If open but nothing highlighted, close to avoid staying open
+        setOpen(false);
       }
     } else if (e.key === "Escape") {
       setOpen(false);
@@ -101,8 +105,13 @@ export default function Select({
       aria-expanded={open}
       aria-haspopup="listbox"
       onKeyDown={handleKeyDown}
+      onBlur={(e) => {
+        if (!containerRef.current) return;
+        if (!containerRef.current.contains(e.relatedTarget)) setOpen(false);
+      }}
     >
       <button
+        ref={buttonRef}
         type="button"
         className="ui-select-trigger"
         onClick={() => !disabled && setOpen((o) => !o)}
@@ -125,10 +134,13 @@ export default function Select({
                 aria-selected={isSelected}
                 className={`item ${isSelected ? "selected" : ""} ${isHighlighted ? "highlighted" : ""}`}
                 onMouseEnter={() => setHighlightedIndex(idx)}
-                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
                   onChange?.(opt.value);
                   setOpen(false);
+                  // move focus away to ensure the menu doesn't immediately reopen
+                  requestAnimationFrame(() => {
+                    try { buttonRef.current && buttonRef.current.blur(); } catch {}
+                  });
                 }}
               >
                 <span className="label">{opt.label}</span>

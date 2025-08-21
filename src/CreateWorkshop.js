@@ -5,7 +5,7 @@ import DatePicker from "./components/DatePicker";
 import "./CreateWorkshop.css";
 
 export default function CreateWorkshop() {
-  const { token } = useAuth();
+  const { token, role } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -14,6 +14,7 @@ export default function CreateWorkshop() {
     instructor: "",
     link: "",
     spaceId: "",
+    price: "",
   });
 
   const [spaces, setSpaces] = useState([]);
@@ -53,7 +54,7 @@ export default function CreateWorkshop() {
     try {
       await apiFetch(
         "/api/v1/workshops",
-        { method: "POST", body: formData, token }
+        { method: "POST", body: formData, token, role }
       );
 
       alert("Workshop created successfully!");
@@ -66,6 +67,7 @@ export default function CreateWorkshop() {
         instructor: "",
         link: "",
         spaceId: "",
+        price: "",
       });
     } catch (error) {
       console.error(error);
@@ -157,6 +159,19 @@ export default function CreateWorkshop() {
             name="link"
             value={formData.link}
             onChange={handleChange}
+          />
+        </label>
+
+        <label>
+          Price:
+          <input
+            type="number"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            placeholder="Enter price in rupees"
+            min="0"
+            required
           />
         </label>
 

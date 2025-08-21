@@ -21,6 +21,7 @@ import BackToTop from "./components/BackToTop";
 import NotFound from "./components/NotFound";
 import { LoginPage, RegisterPage } from "./AuthPages";
 import { useAuth } from "./context/AuthContext";
+import About from "./About";
  
 
 function WorkshopsPage() {
@@ -370,10 +371,11 @@ function App({ userRole, toggleRole, theme, toggleTheme }) {
       <div onClick={() => { if (isSidebarOpen) closeSidebar(); }}>
         <Sidebar userRole={userRole} />
       </div>
-      <Navbar userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
+      <Navbar theme={theme} toggleTheme={toggleTheme} />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/about" element={<About />} />
         {userRole === "regularUser" && (
           <>
             <Route path="/" element={<WorkshopsPage />} />
