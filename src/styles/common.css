@@ -204,6 +204,37 @@ select:disabled {
   height: 200px;
 }
 
+/* ==================== Form Accents ==================== */
+.phone-input {
+  border-color: rgba(16, 185, 129, 0.35); /* emerald */
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.0);
+}
+.phone-input:focus {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.phone-input-group {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+.phone-prefix {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-elevated);
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+}
+.phone-input-group .phone-input {
+  width: 100%;
+}
+
 .spinner {
   border: 6px solid rgba(255, 255, 255, 0.08);
   border-top: 6px solid var(--color-primary);
@@ -216,4 +247,14 @@ select:disabled {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* ==================== Typography Enhancements ==================== */
+/* Ensure the first letter of headings is capitalized for consistency */
+.title::first-letter,
+.hero h1::first-letter,
+.container h1::first-letter,
+.container h2::first-letter,
+.container h3::first-letter {
+  text-transform: uppercase;
 }

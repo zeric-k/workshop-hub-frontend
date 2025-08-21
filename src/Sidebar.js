@@ -2,17 +2,20 @@ import "./Sidebar.css";
 import React, { useState } from "react";
 import { useUI } from "./context/UIContext";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 
 export default function Sidebar({ userRole }) {
   const [expanded, setExpanded] = useState(false);
   const { isSidebarOpen } = useUI();
   const navigate = useNavigate();
   const location = useLocation();
+  const { role, spaceName, firstName, lastName, isAuthenticated } = useAuth();
+  const effectiveRole = isAuthenticated ? role : "ANONYMOUS";
 
   return (
     <div className={`sidebar ${expanded ? "expanded" : "collapsed"} ${isSidebarOpen ? "open" : ""}`} onClick={(e)=>{ e.stopPropagation(); }}>
       <ul className="menu">
-        {userRole === "regularUser" && (
+        {effectiveRole !== "SPACE_OWNER" && (
           <>
             <li
               onClick={() => navigate("/")}
@@ -22,50 +25,47 @@ export default function Sidebar({ userRole }) {
               <span className="label">Workshops</span>
             </li>
             <li
-              onClick={() => navigate("/create")}
-              className={location.pathname === "/create" ? "active" : ""}
-            >
-              <span className="emoji" aria-hidden>✨</span>
-              <span className="label">Create Event</span>
-            </li>
-            <li
-              onClick={() => navigate("/profile")}
-              className={location.pathname === "/profile" ? "active" : ""}
-            >
-              <span className="emoji" aria-hidden>👤</span>
-              <span className="label">Profile</span>
-            </li>
-            <li
               onClick={() => navigate("/spaces")}
               className={location.pathname === "/spaces" ? "active" : ""}
             >
               <span className="emoji" aria-hidden>🏢</span>
               <span className="label">Spaces</span>
             </li>
+            {isAuthenticated && (
+              <>
+                <li
+                  onClick={() => navigate("/profile")}
+                  className={location.pathname === "/profile" ? "active" : ""}
+                >
+                  <span className="emoji" aria-hidden>👤</span>
+                  <span className="label">Profile</span>
+                </li>
+                <li
+                  onClick={() => navigate("/user-booking")}
+                  className={location.pathname === "/user-booking" ? "active" : ""}
+                >
+                  <span className="emoji" aria-hidden>🧾</span>
+                  <span className="label">Booking</span>
+                </li>
+                <li
+                  onClick={() => navigate("/profile")}
+                  className={location.pathname === "/profile" ? "active" : ""}
+                >
+                  <span className="emoji" aria-hidden>👥</span>
+                  <span className="label">My Groups</span>
+                </li>
+              </>
+            )}
             <li
-              onClick={() => navigate("/user-booking")}
-              className={location.pathname === "/user-booking" ? "active" : ""}
-            >
-              <span className="emoji" aria-hidden>🧾</span>
-              <span className="label">Booking</span>
-            </li>
-            <li
-              onClick={() => navigate("/profile")}
-              className={location.pathname === "/profile" ? "active" : ""}
-            >
-              <span className="emoji" aria-hidden>👥</span>
-              <span className="label">My Groups</span>
-            </li>
-            <li
-              onClick={() => navigate("/profile")}
-              className={location.pathname === "/profile" ? "active" : ""}
+              onClick={() => navigate("/about")}
+              className={location.pathname === "/about" ? "active" : ""}
             >
               <span className="emoji" aria-hidden>🧭</span>
               <span className="label">Explore</span>
             </li>
           </>
         )}
-        {userRole === "spaceOwner" && (
+        {effectiveRole === "SPACE_OWNER" && (
           <>
             <li
               onClick={() => navigate("/")}
@@ -99,7 +99,17 @@ export default function Sidebar({ userRole }) {
         )}
       </ul>
       <div className="bottom-bar">
-        <span className="user-label">Guest User</span>
+        <span className="user-label">
+          {isAuthenticated 
+            ? (role === "SPACE_OWNER" && spaceName 
+                ? spaceName 
+                : role === "REGULAR_USER" && firstName 
+                  ? `${firstName} ${lastName || ""}`.trim()
+                  : "Guest User"
+              )
+            : "Guest User"
+          }
+        </span>
         <button
           className="toggle-btn"
           onClick={() => setExpanded(!expanded)}

@@ -19,6 +19,9 @@ import Select from "./components/Select";
 import DatePicker from "./components/DatePicker";
 import BackToTop from "./components/BackToTop";
 import NotFound from "./components/NotFound";
+import { LoginPage, RegisterPage } from "./AuthPages";
+import { useAuth } from "./context/AuthContext";
+import About from "./About";
  
 
 function WorkshopsPage() {
@@ -362,17 +365,21 @@ function WorkshopsPage() {
 
 function App({ userRole, toggleRole, theme, toggleTheme }) {
   const { isSidebarOpen, closeSidebar } = useUI();
+  const { isAuthenticated, role } = useAuth();
   return (
     <BrowserRouter>
       <div onClick={() => { if (isSidebarOpen) closeSidebar(); }}>
         <Sidebar userRole={userRole} />
       </div>
-      <Navbar userRole={userRole} toggleRole={toggleRole} theme={theme} toggleTheme={toggleTheme} />
+      <Navbar theme={theme} toggleTheme={toggleTheme} />
       <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/about" element={<About />} />
         {userRole === "regularUser" && (
           <>
             <Route path="/" element={<WorkshopsPage />} />
-            <Route path="/create" element={<CreateWorkshop />} />
+            <Route path="/create" element={isAuthenticated && role === "SPACE_OWNER" ? <CreateWorkshop /> : <LoginPage />} />
             <Route path="/spaces/:spaceId/book" element={<SlotBooking />} />
             <Route path="/user-booking" element={<UserBooking />} />
             <Route path="/profile" element={<Profile />} />
@@ -383,7 +390,7 @@ function App({ userRole, toggleRole, theme, toggleTheme }) {
         {userRole === "spaceOwner" && (
           <>
             <Route path="/" element={<WorkshopsPage />} />
-            <Route path="/create" element={<CreateWorkshop />} />
+            <Route path="/create" element={isAuthenticated && role === "SPACE_OWNER" ? <CreateWorkshop /> : <LoginPage />} />
             <Route path="/my-space" element={<MySpace />} />
             <Route path="*" element={<NotFound />} />
           </>
