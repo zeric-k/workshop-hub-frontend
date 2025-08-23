@@ -31,7 +31,20 @@ function WorkshopsPage() {
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
   const [searchParams, setSearchParams] = useSearchParams();
-  // formatYMD no longer needed as defaults are fixed
+  // Calculate dynamic workshop dates based on days since 2025-08-24
+  const calculateDynamicDate = (baseDate) => {
+    const referenceDate = new Date('2025-08-24');
+    const currentDate = new Date();
+    const daysDiff = Math.floor((currentDate - referenceDate) / (1000 * 60 * 60 * 24));
+    
+    const workshopDate = new Date(baseDate);
+    workshopDate.setDate(workshopDate.getDate() + daysDiff);
+    
+    const y = workshopDate.getFullYear();
+    const m = String(workshopDate.getMonth() + 1).padStart(2, "0");
+    const d = String(workshopDate.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
   const defaultStart = (() => {
     const sp = searchParams.get("startDate");
     if (sp) return sp;
@@ -143,6 +156,13 @@ function WorkshopsPage() {
         );
         const data = await res.json();
         let newItems = data.payload.workshops || [];
+        
+        // Apply dynamic date calculation to workshops
+        newItems = newItems.map(w => ({
+          ...w,
+          date: calculateDynamicDate(w.date)
+        }));
+        
         // Client-side date filter
         if (startDate || endDate) {
           const start = startDate ? new Date(startDate) : null;
@@ -197,6 +217,13 @@ function WorkshopsPage() {
           );
           const data = await res.json();
           let pageItems = data.payload.workshops || [];
+          
+          // Apply dynamic date calculation to workshops
+          pageItems = pageItems.map(w => ({
+            ...w,
+            date: calculateDynamicDate(w.date)
+          }));
+          
           if (startDate || endDate) {
             const start = startDate ? new Date(startDate) : null;
             const end = endDate ? new Date(endDate) : null;
