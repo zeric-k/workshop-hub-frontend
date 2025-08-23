@@ -46,14 +46,21 @@ function WorkshopsPage() {
     return `${y}-${m}-${d}`;
   };
   const defaultStart = (() => {
-    const sp = searchParams.get("startDate");
-    if (sp) return sp;
-    return "2025-08-24"; // Fixed default start date
+    // Always default to current date, ignore any existing URL params on first load
+    const t = new Date();
+    const y = t.getFullYear();
+    const m = String(t.getMonth() + 1).padStart(2, "0");
+    const d = String(t.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   })();
   const defaultEnd = (() => {
-    const ep = searchParams.get("endDate");
-    if (ep) return ep;
-    return "2025-09-14"; // Fixed default end date
+    // Always default to 3 weeks after current date, ignore URL params on first load
+    const t = new Date();
+    t.setDate(t.getDate() + 21);
+    const y = t.getFullYear();
+    const m = String(t.getMonth() + 1).padStart(2, "0");
+    const d = String(t.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   })();
   const [startDate, setStartDate] = useState(defaultStart);
   const [endDate, setEndDate] = useState(defaultEnd);
