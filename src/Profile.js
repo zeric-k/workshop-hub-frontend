@@ -1,28 +1,89 @@
 // Profile.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "./context/AuthContext";
 import "./Profile.css";
 
 export default function Profile() {
-  // Dummy logged-in user data (replace with API call)
+  const { role, firstName, lastName, email, phone, isAuthenticated } = useAuth();
   const [user, setUser] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "123-456-7890",
+    name: "",
+    email: "",
+    phone: "",
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ ...user });
+
+  // Use data from login response
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setError("Please login to view your profile");
+      setLoading(false);
+      return;
+    }
+
+    // Use data from login response
+    const displayName = firstName && lastName ? `${firstName} ${lastName}` : (firstName || lastName || "Name not available");
+    
+    setUser({
+      name: displayName,
+      email: email || "Email not available",
+      phone: phone || "Phone not available"
+    });
+    setForm({
+      name: displayName,
+      email: email || "Email not available",
+      phone: phone || "Phone not available"
+    });
+    setLoading(false);
+    
+    console.log("Profile component - Available auth data:", {
+      isAuthenticated,
+      role,
+      firstName,
+      lastName,
+      email,
+      phone,
+      displayName
+    });
+  }, [isAuthenticated, firstName, lastName, email, phone, role]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    setUser({ ...form });
-    setEditing(false);
-    alert("Profile updated successfully!");
-    // TODO: Send updated info to backend API
+  const handleSave = async () => {
+    try {
+      // TODO: Send updated info to backend API
+      // For now, just update local state
+      setUser({ ...form });
+      setEditing(false);
+      alert("Profile updated successfully!");
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      alert("Failed to update profile");
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="profile-container">
+        <h1>My Profile</h1>
+        <p>Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="profile-container">
+        <h1>My Profile</h1>
+        <p style={{ color: "#ef4444" }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -38,7 +99,7 @@ export default function Profile() {
             onChange={handleChange}
           />
         ) : (
-          <span>{user.name}</span>
+          <span>{user.name || "Not available"}</span>
         )}
       </div>
 
@@ -52,7 +113,7 @@ export default function Profile() {
             onChange={handleChange}
           />
         ) : (
-          <span>{user.email}</span>
+          <span>{user.email || "Not available"}</span>
         )}
       </div>
 
@@ -66,7 +127,7 @@ export default function Profile() {
             onChange={handleChange}
           />
         ) : (
-          <span>{user.phone}</span>
+          <span>{user.phone || "Not available"}</span>
         )}
       </div>
 

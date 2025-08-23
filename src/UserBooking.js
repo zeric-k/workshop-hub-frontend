@@ -1,10 +1,13 @@
 // UserBooking.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
+import { listUserPayments } from "./api";
 import "./UserBooking.css";
 
 export default function UserBooking() {
   const navigate = useNavigate();
+  const { isAuthenticated, token, userId } = useAuth();
 
   const [bookingType, setBookingType] = useState(""); // "space" or "datetime"
   const [date, setDate] = useState("");
@@ -13,6 +16,8 @@ export default function UserBooking() {
   const [selectedSpace, setSelectedSpace] = useState("");
 
   const [availableSpaces, setAvailableSpaces] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(false);
 
   // Fetch all spaces
   useEffect(() => {
@@ -29,6 +34,23 @@ export default function UserBooking() {
     };
     fetchSpaces();
   }, []);
+
+  // Load user's past bookings/payments
+  useEffect(() => {
+    const loadPayments = async () => {
+      if (!isAuthenticated || !userId) return;
+      setLoadingPayments(true);
+      try {
+        const res = await listUserPayments({ token, userId });
+        setPayments(Array.isArray(res) ? res : []);
+      } catch (e) {
+        console.error("Failed to load payments", e);
+      } finally {
+        setLoadingPayments(false);
+      }
+    };
+    loadPayments();
+  }, [isAuthenticated, token, userId]);
 
   // Handle booking by space
   const handleSpaceBooking = () => {
@@ -52,10 +74,15 @@ export default function UserBooking() {
 
   return (
     <div className="user-booking-container">
-      <h1>User Booking</h1>
+      <div className="hero card-surface" style={{ marginBottom: 16 }}>
+        <div>
+          <h1>User Booking</h1>
+          <p className="subtitle">Book by space or by date & time.</p>
+        </div>
+      </div>
 
       {!bookingType && (
-        <div className="booking-type-selection">
+        <div className="booking-type-selection card-surface" style={{ padding: 16 }}>
           <h3>How do you want to book?</h3>
           <label>
             <input
@@ -80,7 +107,7 @@ export default function UserBooking() {
 
       {/* Booking by Space */}
       {bookingType === "space" && (
-        <div className="booking-section">
+        <div className="booking-section card-surface" style={{ padding: 16 }}>
           <h3>Select Space:</h3>
           <select
             value={selectedSpace}
@@ -107,7 +134,7 @@ export default function UserBooking() {
 
       {/* Booking by Date & Time */}
       {bookingType === "datetime" && (
-        <div className="booking-section">
+        <div className="booking-section card-surface" style={{ padding: 16 }}>
           <h3>Select Date & Time:</h3>
           <input
             type="date"
@@ -148,6 +175,27 @@ export default function UserBooking() {
           )}
         </div>
       )}
+
+      {/* Past bookings */}
+      <div className="card-surface" style={{ padding: 16, marginTop: 16 }}>
+        <h3 className="title">Your Payments</h3>
+        {loadingPayments ? (
+          <p>Loading...</p>
+        ) : payments.length === 0 ? (
+          <p className="info">No payments yet.</p>
+        ) : (
+          <div style={{ display: "grid", gap: 8 }}>
+            {payments.map((p) => (
+              <div key={p.id} className="card-surface" style={{ padding: 12 }}>
+                <div className="info"><strong>Workshop ID:</strong> {p.workshopId}</div>
+                <div className="info"><strong>Amount:</strong> ₹{p.amount}</div>
+                <div className="info"><strong>Status:</strong> {p.status}</div>
+                <div className="info"><strong>Reference:</strong> {p.paymentReference}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

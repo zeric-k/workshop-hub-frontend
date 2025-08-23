@@ -1,78 +1,97 @@
 .sidebar {
-  background-color: #222;
-  color: white;
-  height: 100vh;
+  background: linear-gradient(180deg, rgba(16, 16, 20, 0.92), rgba(16, 16, 20, 0.82));
+  color: var(--color-text);
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
-  width: 200px; /* default expanded width */
-  transition: width 0.3s ease;
-
+  width: 240px;
+  z-index: 40;
+  transition: width 0.25s ease;
   display: flex;
   flex-direction: column;
-
   overflow: hidden;
+  border-right: 1px solid rgba(245, 158, 11, 0.15);
 }
 
 .sidebar.collapsed {
-  width: 40px;
+  width: 64px;
+}
+
+@media (max-width: 680px) {
+  .sidebar { transform: translateX(-100%); transition: transform 0.25s ease; width: 260px; }
+  .sidebar.open { transform: translateX(0); }
 }
 
 .menu {
   list-style: none;
   padding: 0;
   margin: 0;
-  padding-top: 60px; /* Push items below navbar height */
-  flex-grow: 1; /* This takes up available space */
+  padding-top: 60px; /* space for navbar */
+  flex-grow: 1;
   overflow-y: auto;
 }
 
 .menu li {
-  padding: 10px;
+  padding: 10px 12px;
   cursor: pointer;
+  border-radius: 8px;
+  margin: 2px 8px;
+  color: var(--color-text);
+  transition: background 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.menu li:hover {
-  background-color: #444;
-}
+.menu li:hover { background-color: rgba(245, 158, 11, 0.1); }
+
+.menu li.active { background-color: rgba(245, 158, 11, 0.18); color: #fde68a; font-weight: 700; }
+
+.emoji { width: 22px; text-align: center; flex: 0 0 22px; }
+.label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sidebar.collapsed .label { display: none; }
+.sidebar.collapsed .user-label { display: none; }
 
 /* Add a spacer div to push bottom-bar down when menu is hidden */
 .menu-spacer {
-  flex-grow: 1; /* Takes up all available space */
+  flex-grow: 1;
 }
 
 .bottom-bar {
-  border-top: 1px solid #444;
-  height: 50px; /* fixed height */
+  border-top: 1px solid var(--color-card-border);
+  height: 52px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   position: relative;
-  flex-shrink: 0; /* Prevent it from shrinking */
+  flex-shrink: 0;
 }
 
 .user-label {
-  font-weight: bold;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   user-select: none;
   position: absolute;
-  left: 10px;
-  right: 50px;
+  left: 12px;
+  right: 52px;
+  color: var(--color-muted);
 }
 
 .toggle-btn {
-  background-color: #222;
+  background: transparent;
   border: none;
-  color: white;
-  font-size: 1.5rem;
+  color: var(--color-text);
+  font-size: 1.3rem;
   font-weight: bold;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
+  width: 52px;
+  height: 52px;
+  line-height: 52px;
   text-align: center;
   padding: 0;
   transition: background-color 0.2s ease;
@@ -82,11 +101,5 @@
   top: 50%;
   transform: translateY(-50%);
 }
-.menu li.active {
-  background-color: #353535;
-  font-weight: bold;
-}
 
-.toggle-btn:hover {
-  background-color: #444;
-}
+.toggle-btn:hover { background-color: rgba(245, 158, 11, 0.1); }

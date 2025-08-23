@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "./context/AuthContext";
+import { apiFetch } from "./api";
+import DatePicker from "./components/DatePicker";
 import "./CreateWorkshop.css";
 
 export default function CreateWorkshop() {
+  const { token, role } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -10,6 +14,7 @@ export default function CreateWorkshop() {
     instructor: "",
     link: "",
     spaceId: "",
+    price: "",
   });
 
   const [spaces, setSpaces] = useState([]);
@@ -47,20 +52,10 @@ export default function CreateWorkshop() {
     }
 
     try {
-      const response = await fetch(
-        "https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+      await apiFetch(
+        "/api/v1/workshops",
+        { method: "POST", body: formData, token, role }
       );
-
-      if (!response.ok) {
-        throw new Error("Failed to create workshop");
-      }
 
       alert("Workshop created successfully!");
       // Reset form
@@ -72,6 +67,7 @@ export default function CreateWorkshop() {
         instructor: "",
         link: "",
         spaceId: "",
+        price: "",
       });
     } catch (error) {
       console.error(error);
@@ -96,12 +92,9 @@ export default function CreateWorkshop() {
 
         <label>
           Date:
-          <input
-            type="date"
-            name="date"
+          <DatePicker
             value={formData.date}
-            onChange={handleChange}
-            required
+            onChange={(val) => setFormData({ ...formData, date: val })}
           />
         </label>
 
@@ -166,6 +159,19 @@ export default function CreateWorkshop() {
             name="link"
             value={formData.link}
             onChange={handleChange}
+          />
+        </label>
+
+        <label>
+          Price:
+          <input
+            type="number"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            placeholder="Enter price in rupees"
+            min="0"
+            required
           />
         </label>
 
