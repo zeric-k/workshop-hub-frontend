@@ -1,5 +1,6 @@
 export async function apiFetch(path, { method = "GET", headers = {}, body, token, role } = {}) {
-  const url = path.startsWith("http") ? path : `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net${path}`;
+  // Use relative paths in dev so setupProxy handles CORS to Azure
+  const url = path.startsWith("http") ? path : path;
   const finalHeaders = { "Content-Type": "application/json", ...headers };
   if (token) {
     // token expected like "Bearer abc..." per backend response
@@ -20,6 +21,28 @@ export async function apiFetch(path, { method = "GET", headers = {}, body, token
   const contentType = res.headers.get("content-type") || "";
   if (contentType.includes("application/json")) return res.json();
   return res.text();
+}
+
+export async function createPayment({ token, userId, workshopId, amount }) {
+  return apiFetch(`https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/payments/create`, {
+    method: "POST",
+    token,
+    body: { userId: Number(userId), workshopId: Number(workshopId), amount: Number(amount) },
+  });
+}
+
+export async function confirmPayment({ token, paymentId }) {
+  return apiFetch(`https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/payments/${paymentId}/confirm`, {
+    method: "POST",
+    token,
+  });
+}
+
+export async function listUserPayments({ token, userId }) {
+  return apiFetch(`https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/payments/user/${userId}`, {
+    method: "GET",
+    token,
+  });
 }
 
 
