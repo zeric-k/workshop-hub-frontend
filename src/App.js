@@ -31,24 +31,36 @@ function WorkshopsPage() {
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
   const [searchParams, setSearchParams] = useSearchParams();
-  const formatYMD = (date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
+  // Calculate dynamic workshop dates based on days since 2025-08-24
+  const calculateDynamicDate = (baseDate) => {
+    const referenceDate = new Date('2025-08-24');
+    const currentDate = new Date();
+    const daysDiff = Math.floor((currentDate - referenceDate) / (1000 * 60 * 60 * 24));
+    
+    const workshopDate = new Date(baseDate);
+    workshopDate.setDate(workshopDate.getDate() + daysDiff);
+    
+    const y = workshopDate.getFullYear();
+    const m = String(workshopDate.getMonth() + 1).padStart(2, "0");
+    const d = String(workshopDate.getDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   };
   const defaultStart = (() => {
-    const sp = searchParams.get("startDate");
-    if (sp) return sp;
+    // Always default to current date, ignore any existing URL params on first load
     const t = new Date();
-    return formatYMD(t);
+    const y = t.getFullYear();
+    const m = String(t.getMonth() + 1).padStart(2, "0");
+    const d = String(t.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   })();
   const defaultEnd = (() => {
-    const ep = searchParams.get("endDate");
-    if (ep) return ep;
+    // Always default to 3 weeks after current date, ignore URL params on first load
     const t = new Date();
     t.setDate(t.getDate() + 21);
-    return formatYMD(t);
+    const y = t.getFullYear();
+    const m = String(t.getMonth() + 1).padStart(2, "0");
+    const d = String(t.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
   })();
   const [startDate, setStartDate] = useState(defaultStart);
   const [endDate, setEndDate] = useState(defaultEnd);
@@ -151,6 +163,13 @@ function WorkshopsPage() {
         );
         const data = await res.json();
         let newItems = data.payload.workshops || [];
+        
+        // Apply dynamic date calculation to workshops
+        newItems = newItems.map(w => ({
+          ...w,
+          date: calculateDynamicDate(w.date)
+        }));
+        
         // Client-side date filter
         if (startDate || endDate) {
           const start = startDate ? new Date(startDate) : null;
@@ -205,6 +224,13 @@ function WorkshopsPage() {
           );
           const data = await res.json();
           let pageItems = data.payload.workshops || [];
+          
+          // Apply dynamic date calculation to workshops
+          pageItems = pageItems.map(w => ({
+            ...w,
+            date: calculateDynamicDate(w.date)
+          }));
+          
           if (startDate || endDate) {
             const start = startDate ? new Date(startDate) : null;
             const end = endDate ? new Date(endDate) : null;
