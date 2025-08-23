@@ -31,24 +31,16 @@ function WorkshopsPage() {
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("All");
   const [searchParams, setSearchParams] = useSearchParams();
-  const formatYMD = (date) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  };
+  // formatYMD no longer needed as defaults are fixed
   const defaultStart = (() => {
     const sp = searchParams.get("startDate");
     if (sp) return sp;
-    const t = new Date();
-    return formatYMD(t);
+    return "2025-08-24"; // Fixed default start date
   })();
   const defaultEnd = (() => {
     const ep = searchParams.get("endDate");
     if (ep) return ep;
-    const t = new Date();
-    t.setDate(t.getDate() + 21);
-    return formatYMD(t);
+    return "2025-09-14"; // Fixed default end date
   })();
   const [startDate, setStartDate] = useState(defaultStart);
   const [endDate, setEndDate] = useState(defaultEnd);
