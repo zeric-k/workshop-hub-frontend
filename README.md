@@ -1,71 +1,126 @@
-# Getting Started with Create React App
+# 🎨 Dance Workshop Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Frontend application for the **Dance Workshop Management Platform**, built with **React**.  
+It allows users to register/login, explore workshops & spaces, book sessions, and manage payments.  
 
-## Available Scripts
-
-In the project directory, you can run:
+🌐 **Live App:** [Dance Workshop Platform](https://victorious-bush-0ba28f000.2.azurestaticapps.net/)  
 
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 Features
+- 🔐 **Authentication** – Register/Login, JWT-based session handling  
+- 📅 **Workshops** – Browse, filter by category/level, view details  
+- 🏢 **Spaces** – List & manage studio spaces  
+- 💳 **Payments** – Book workshops and confirm payments (mocked for demo)  
+- 📱 **Responsive UI** – Optimized for desktop & mobile  
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠️ Tech Stack
+- **React 18** (or Vite/Next.js – update if different)  
+- **Axios** for API requests  
+- **React Router** for navigation  
+- **TailwindCSS / Material UI** for styling (update if using something else)  
+- **Backend:** Spring Boot 2 + Azure SQL (see [Backend Repo](../backend))  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 📂 Project Structure
+frontend/
+├── public/ # Static assets
+├── src/
+│ ├── api/ # Axios API calls
+│ ├── components/ # Reusable UI components
+│ ├── pages/ # Pages (Login, Workshops, Spaces, Payments, etc.)
+│ ├── hooks/ # Custom hooks
+│ ├── App.js # Root app with routes
+│ └── index.js # Entry point
+├── package.json
+└── README.md
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+yaml
+Copy
+Edit
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⚙️ Setup & Installation
 
-### `npm run eject`
+### 1. Clone the Repo
+```bash
+git clone https://github.com/yourusername/dance-workshop-frontend.git
+cd dance-workshop-frontend
+2. Install Dependencies
+bash
+Copy
+Edit
+npm install
+# or
+yarn install
+3. Configure Environment Variables
+Create a .env file in the root:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+env
+Copy
+Edit
+REACT_APP_API_BASE_URL=http://localhost:8080
+Replace http://localhost:8080 with your deployed backend URL when running in production.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Run Locally
+bash
+Copy
+Edit
+npm start
+Runs on 👉 http://localhost:3000
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+🔑 API Integration
+This frontend communicates with the backend endpoints:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Auth
+POST /auth/register → User signup
 
-## Learn More
+POST /auth/login → User login
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Workshops
+GET /api/v1/workshops → List workshops (with filters)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+POST /api/v1/workshops → Create a new workshop (admin only)
 
-### Code Splitting
+Spaces
+GET /api/v1/spaces → List spaces
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+POST /api/v1/spaces → Create space
 
-### Analyzing the Bundle Size
+Payments
+POST /api/payments/create → Create payment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+POST /api/payments/confirm/{paymentId} → Confirm payment
 
-### Making a Progressive Web App
+GET /api/payments/user/{userId} → User’s payment history
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+📦 Build for Production
+bash
+Copy
+Edit
+npm run build
+The production-ready build will be available in the build/ directory.
 
-### Advanced Configuration
+You can then deploy to Netlify, Vercel, Azure Static Web Apps, or any hosting service.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+🌐 Deployment Example (Azure Static Web Apps)
+Push your repo to GitHub.
 
-### Deployment
+Go to Azure Portal → Static Web Apps → Create resource.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Connect your GitHub repo & branch.
 
-### `npm run build` fails to minify
+Set build output folder: build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Set environment variable REACT_APP_API_BASE_URL to your backend API URL.
+
+🖼️ Demo Screenshots
+(Add screenshots/gifs here after running the app: Login page, Workshop list, Booking flow, Payment confirmation, etc.)
+
+🤝 Contributing
+Contributions are welcome! Feel free to fork and create a PR.
