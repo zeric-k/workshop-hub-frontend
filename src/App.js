@@ -21,6 +21,7 @@ import BackToTop from "./components/BackToTop";
 import NotFound from "./components/NotFound";
 import { LoginPage, RegisterPage } from "./AuthPages";
 import { useAuth } from "./context/AuthContext";
+import { createPayment, confirmPayment } from "./api";
 import About from "./About";
  
 
@@ -62,6 +63,8 @@ function WorkshopsPage() {
   const loadMoreRef = React.useRef(null);
   
   const manualBatchRef = React.useRef(false);
+  const { isAuthenticated, token, role, userId } = useAuth();
+  const [pendingPayment, setPendingPayment] = useState(null); // { paymentId, reference, amount, title }
 
   // No Instagram thumbnail scraping for card media
 
@@ -140,6 +143,8 @@ function WorkshopsPage() {
         if (category !== "All") params.append("category", category);
         if (level !== "All") params.append("level", level);
         if (selectedSpace !== "All") params.append("spaceId", selectedSpace);
+        // For logged-in users, pass userId to fetch booked flag
+        if (isAuthenticated && userId) params.append("userId", String(userId));
 
         const res = await fetch(
           `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
@@ -171,7 +176,7 @@ function WorkshopsPage() {
     };
 
     fetchWorkshops();
-  }, [currentPage, pageSize, category, level, selectedSpace, startDate, endDate]);
+  }, [currentPage, pageSize, category, level, selectedSpace, startDate, endDate, isAuthenticated, role, userId]);
 
   const hasMore = currentPage < totalPages;
 
@@ -194,6 +199,7 @@ function WorkshopsPage() {
           if (category !== "All") params.append("category", category);
           if (level !== "All") params.append("level", level);
           if (selectedSpace !== "All") params.append("spaceId", selectedSpace);
+          if (isAuthenticated && userId) params.append("userId", String(userId));
           const res = await fetch(
             `https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/api/v1/workshops?${params.toString()}`
           );
@@ -232,7 +238,7 @@ function WorkshopsPage() {
     return () => {
       observer.disconnect();
     };
-  }, [hasMore, loading, appending, totalPages, currentPage, pageSize, category, level, selectedSpace, startDate, endDate]);
+  }, [hasMore, loading, appending, totalPages, currentPage, pageSize, category, level, selectedSpace, startDate, endDate, isAuthenticated, role, userId]);
   
 
   if (loading && currentPage === 1) return <SkeletonGrid count={6} />;
@@ -339,15 +345,60 @@ function WorkshopsPage() {
                 <a href={w.link} target="_blank" rel="noreferrer" className="link">
                   Instagram
                 </a>
-                <button
-                  className="book-workshop-btn"
-                  onClick={() => alert(`Booking workshop: ${w.title} on ${w.date}`)}
-                >
-                  Register
-                </button>
+                {w.booked ? (
+                  <button className="book-workshop-btn" disabled>Booked</button>
+                ) : (
+                  <button
+                    className="book-workshop-btn"
+                    onClick={async () => {
+                      if (!isAuthenticated || role !== "REGULAR_USER") {
+                        alert("Please login as Regular User to register");
+                        return;
+                      }
+                      try {
+                        const res = await createPayment({ token, userId: Number(userId), workshopId: Number(w.id), amount: Number(w.price) });
+                        setPendingPayment({ paymentId: res.paymentId, reference: res.reference, amount: w.price, title: w.title });
+                      } catch (e) {
+                        console.error("Payment create failed", e);
+                        alert(`Failed to start payment: ${e.message || 'Unknown error'}`);
+                      }
+                    }}
+                  >
+                    Register
+                  </button>
+                )}
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Payment modal */}
+      {pendingPayment && (
+        <div className="card-surface" style={{ padding: 16, margin: '16px 0' }}>
+          <p className="info" style={{ marginBottom: 8 }}>
+            Confirm payment of <strong>₹{pendingPayment.amount}</strong> for <strong>{pendingPayment.title}</strong>?
+          </p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button className="btn save" onClick={async ()=>{
+              try {
+                const res = await confirmPayment({ token, paymentId: pendingPayment.paymentId });
+                if (res.status === 'SUCCESS') {
+                  alert('Payment successful');
+                  setPendingPayment(null);
+                  // Optionally refresh workshops to reflect booked flag
+                  setCurrentPage(1);
+                  setWorkshops([]);
+                } else {
+                  alert('Payment not successful');
+                }
+              } catch (e) {
+                console.error('Payment confirm failed', e);
+                alert('Failed to confirm payment');
+              }
+            }}>Confirm</button>
+            <button className="btn cancel" onClick={()=> setPendingPayment(null)}>Cancel</button>
+          </div>
         </div>
       )}
 

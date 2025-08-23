@@ -48,8 +48,8 @@ export default function Sidebar({ userRole }) {
                   <span className="label">Booking</span>
                 </li>
                 <li
-                  onClick={() => navigate("/profile")}
-                  className={location.pathname === "/profile" ? "active" : ""}
+                  onClick={() => navigate("/my-groups")}
+                  className={location.pathname === "/my-groups" ? "active" : ""}
                 >
                   <span className="emoji" aria-hidden>👥</span>
                   <span className="label">My Groups</span>

@@ -23,6 +23,18 @@ export function AuthProvider({ children }) {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("auth_last_name") || null;
   });
+  const [email, setEmail] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("auth_email") || null;
+  });
+  const [phone, setPhone] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("auth_phone") || null;
+  });
+  const [userId, setUserId] = useState(() => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("auth_user_id") || null;
+  });
 
   const isAuthenticated = !!token;
 
@@ -55,6 +67,23 @@ export function AuthProvider({ children }) {
     else localStorage.removeItem("auth_last_name");
   }, [lastName]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (email) localStorage.setItem("auth_email", email);
+    else localStorage.removeItem("auth_email");
+  }, [email]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (phone) localStorage.setItem("auth_phone", phone);
+    else localStorage.removeItem("auth_phone");
+  }, [phone]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (userId) localStorage.setItem("auth_user_id", userId);
+    else localStorage.removeItem("auth_user_id");
+  }, [userId]);
+
   const login = useCallback(async ({ username, password }) => {
     const res = await fetch(
       "https://dev-workshops-service-fgdpf6amcahzhuge.centralindia-01.azurewebsites.net/auth/login",
@@ -66,7 +95,7 @@ export function AuthProvider({ children }) {
     );
     if (!res.ok) throw new Error("Login failed");
     const data = await res.json();
-    // API returns { token: "<jwt>", role: "SPACE_OWNER" | "REGULAR_USER", spaceName?: "string", firstName?: "string", lastName?: "string" }
+    // API returns { token, role, spaceName?, firstName?, lastName?, email?, phone?, userId? }
     const receivedToken = data.token || null;
     const normalizedToken = receivedToken
       ? (receivedToken.startsWith("Bearer ") ? receivedToken : `Bearer ${receivedToken}`)
@@ -76,6 +105,11 @@ export function AuthProvider({ children }) {
     if (data.spaceName) setSpaceName(data.spaceName);
     if (data.firstName) setFirstName(data.firstName);
     if (data.lastName) setLastName(data.lastName);
+    if (data.email) setEmail(data.email);
+    if (data.phone) setPhone(data.phone);
+    // Support both userId and id keys from backend
+    const uid = data.userId ?? data.id;
+    if (uid !== undefined && uid !== null && uid !== "") setUserId(String(uid));
     return true;
   }, []);
 
@@ -103,11 +137,14 @@ export function AuthProvider({ children }) {
     setSpaceName(null);
     setFirstName(null);
     setLastName(null);
+    setEmail(null);
+    setPhone(null);
+    setUserId(null);
   }, []);
 
   const value = useMemo(
-    () => ({ token, isAuthenticated, role, spaceName, firstName, lastName, setRole, login, register, logout }),
-    [token, isAuthenticated, role, spaceName, firstName, lastName, login, register, logout]
+    () => ({ token, isAuthenticated, role, spaceName, firstName, lastName, email, phone, userId, setRole, login, register, logout }),
+    [token, isAuthenticated, role, spaceName, firstName, lastName, email, phone, userId, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
